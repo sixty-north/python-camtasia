@@ -19,8 +19,8 @@ class Project:
     """
 
     def __init__(self, file_path):
-        self._file_path = Path(file_path).resolve()
-        with (self._file_path / 'project.tscproj').open(mode='rt') as handle:
+        self._file_path = file_path
+        with (self.file_path / 'project.tscproj').open(mode='rt') as handle:
             self._data = json.load(handle)
 
     @property
@@ -46,7 +46,6 @@ class Project:
             data = timeline_data['sceneTrack']['scenes'][0]['csml']['tracks'][idx]
             yield Track(attrs, data, self.edit_rate)
 
-
     @property
     def timeline_markers(self) -> Iterable[Marker]:
         for frame in self._data['timeline']['parameters']['toc']['keyframes']:
@@ -54,3 +53,15 @@ class Project:
 
     def __repr__(self):
         return f'Project(file_path="{self.file_path}")'
+
+
+def load_project(file_path):
+    """Load a Camtasia project at the specific path.
+
+    Args:
+        file_path: The path (pathlib.Path or str) to the Camtasia project.
+
+    Return: A new Project instance.
+    """
+    file_path = Path(file_path).resolve()
+    return Project(file_path)
