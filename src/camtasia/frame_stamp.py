@@ -36,3 +36,35 @@ class FrameStamp:
 
     def __lt__(self, rhs):
         return self.time < rhs.time
+
+    def __add__(self, rhs):
+        return self._add(self.frame_rate, self.frame_number,
+                         rhs.frame_rate, rhs.frame_number)
+
+    def __sub__(self, rhs):
+        return self._add(self.frame_rate, self.frame_number,
+                         rhs.frame_rate, -1 * rhs.frame_number)
+
+    @staticmethod
+    def _add(frame_rate_1, frame_number_1, frame_rate_2, frame_number_2):
+        """Add two frame-rate/-number combos together.
+
+        The result is reported in the lower-common-multiple frame-rate, with frame numbers adjusted accordingly.
+        """
+        common_frame_rate = _lcm(frame_rate_1, frame_rate_2)
+        lhs_frame = (common_frame_rate // frame_rate_1) * frame_number_1
+        rhs_frame = (common_frame_rate // frame_rate_2) * frame_number_2
+
+        return FrameStamp(
+            frame_number=lhs_frame + rhs_frame,
+            frame_rate=common_frame_rate)
+
+
+def _lcm(x, y):
+    "Quick-and-dirty LCM"
+    mul = x * y
+
+    while y > 0:
+        x, y = y, x % y
+
+    return mul // x
