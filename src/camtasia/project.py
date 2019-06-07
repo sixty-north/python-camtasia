@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from camtasia.authoring_client import AuthoringClient
+from camtasia.frame_stamp import FrameStamp
 from camtasia.marker import Marker
 
 
@@ -39,9 +40,4 @@ class Project:
     @property
     def markers(self) -> Iterable[Marker]:
         for frame in self._data['timeline']['parameters']['toc']['keyframes']:
-            yield Marker(
-                time=frame['time'],
-                end_time=frame['endTime'],
-                value=frame['value'],
-                duration=frame['duration']
-            )
+            yield Marker(name=frame['value'], time=FrameStamp(frame_number=frame['time'], frame_rate=self.edit_rate))

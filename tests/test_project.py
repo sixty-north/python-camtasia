@@ -1,3 +1,4 @@
+from camtasia.frame_stamp import FrameStamp
 from camtasia.project import Marker
 
 
@@ -16,12 +17,12 @@ def test_markers(simple_video):
     markers = list(simple_video.markers)
     markers.sort(key=lambda x: x.time)
     assert markers == [
-        Marker(time=150, end_time=150, value='marker-1', duration=0),
-        Marker(time=300, end_time=300, value='marker-2', duration=0),
-        Marker(time=450, end_time=450, value='marker-3', duration=0),
-        Marker(time=600, end_time=600, value='marker-4', duration=0),
-        Marker(time=750, end_time=750, value='marker-5', duration=0),
-        Marker(time=900, end_time=900, value='marker-6', duration=0),
+        Marker(time=FrameStamp(150, simple_video.edit_rate), name='marker-1'),
+        Marker(time=FrameStamp(300, simple_video.edit_rate), name='marker-2'),
+        Marker(time=FrameStamp(450, simple_video.edit_rate), name='marker-3'),
+        Marker(time=FrameStamp(600, simple_video.edit_rate), name='marker-4'),
+        Marker(time=FrameStamp(750, simple_video.edit_rate), name='marker-5'),
+        Marker(time=FrameStamp(900, simple_video.edit_rate), name='marker-6'),
     ]
 
 
