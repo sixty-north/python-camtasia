@@ -42,7 +42,7 @@
     "sceneTrack" : {
       "scenes" : [
         {
-          "duration" : 34.4,
+          "duration" : 70.0666666666667,
           "title" : "",
           "type" : "",
           "csml" : {
@@ -52,6 +52,70 @@
                 "medias" : [
                   {
                     "id" : 3,
+                    "_type" : "ScreenVMFile",
+                    "src" : 1,
+                    "trackNumber" : 0,
+                    "attributes" : {
+                      "ident" : "Rec 6-6-2019"
+                    },
+                    "parameters" : {
+                      "scale0" : {
+                        "type" : "double",
+                        "defaultValue" : 0.25,
+                        "interp" : "eioe"
+                      },
+                      "scale1" : {
+                        "type" : "double",
+                        "defaultValue" : 0.25,
+                        "interp" : "eioe"
+                      },
+                      "toc" : {
+                        "type" : "string",
+                        "keyframes" : [
+                          {
+                            "endTime" : 60,
+                            "time" : 60,
+                            "value" : "media-marker-1",
+                            "duration" : 0
+                          },
+                          {
+                            "endTime" : 120,
+                            "time" : 120,
+                            "value" : "media-marker-2",
+                            "duration" : 0
+                          }
+                        ]
+                      },
+                      "cursorScale" : {
+                        "type" : "double",
+                        "defaultValue" : 1.0,
+                        "interp" : "linr"
+                      },
+                      "cursorOpacity" : {
+                        "type" : "double",
+                        "defaultValue" : 1.0,
+                        "interp" : "linr"
+                      }
+                    },
+                    "effects" : [
+
+                    ],
+                    "start" : 0,
+                    "duration" : 1032,
+                    "mediaStart" : 0,
+                    "mediaDuration" : 1032,
+                    "scalar" : 1,
+                    "metadata" : {
+                      "clipSpeedAttribute" : false,
+                      "default-scale" : "0.25",
+                      "effectApplied" : "none"
+                    },
+                    "animationTracks" : {
+
+                    }
+                  },
+                  {
+                    "id" : 4,
                     "_type" : "ScreenVMFile",
                     "src" : 1,
                     "trackNumber" : 0,
@@ -83,7 +147,7 @@
                     "effects" : [
 
                     ],
-                    "start" : 0,
+                    "start" : 1070,
                     "duration" : 1032,
                     "mediaStart" : 0,
                     "mediaDuration" : 1032,
@@ -106,7 +170,7 @@
     },
     "trackAttributes" : [
       {
-        "ident" : "",
+        "ident" : "populated-track",
         "audioMuted" : false,
         "videoHidden" : false,
         "magnetic" : false,
