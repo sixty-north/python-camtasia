@@ -7,13 +7,13 @@ class Media:
 
     The relationship between the underlying media and that visible on the timeline on the timeline is a bit involved:
 
-             v media-start
+        v--media-start--v
         -------------------------------------------------------
         | underlying media                                    |
         -------------------------------------------------------
-             |---- visible part of media ----|
-             |                               |
-             v start                         v
+                        |---- visible part of media ----|
+                        |                               |
+    v--start------------v                               v
     -------------------------------------------------------------------------------
     |  timeline                                                                   |
     -------------------------------------------------------------------------------
