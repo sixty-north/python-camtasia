@@ -38,6 +38,6 @@ class Project:
         return self._data['editRate']
 
     @property
-    def markers(self) -> Iterable[Marker]:
+    def timeline_markers(self) -> Iterable[Marker]:
         for frame in self._data['timeline']['parameters']['toc']['keyframes']:
             yield Marker(name=frame['value'], time=FrameStamp(frame_number=frame['time'], frame_rate=self.edit_rate))

@@ -14,7 +14,7 @@ def test_edit_rate(simple_video):
 
 
 def test_markers(simple_video):
-    markers = list(simple_video.markers)
+    markers = list(simple_video.timeline_markers)
     markers.sort(key=lambda x: x.time)
     assert markers == [
         Marker(time=FrameStamp(150, simple_video.edit_rate), name='marker-1'),
