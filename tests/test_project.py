@@ -36,6 +36,13 @@ def test_first_track_medias(simple_video):
         Marker(time=FrameStamp(120, simple_video.edit_rate),
                name='media-marker-2'),
     ]
+    
+
+def test_second_media_markers_are_empty(simple_video):
+    track = next(islice(simple_video.tracks, 1))
+    media = next(islice(track.medias, 1, 2))
+    markers = list(media.markers)
+    assert markers == []
 
 
 def test_timeline_markers(simple_video):

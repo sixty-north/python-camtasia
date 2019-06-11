@@ -34,7 +34,10 @@ class Media:
 
     @property
     def markers(self):
-        for m in self._data['parameters']['toc']['keyframes']:
+        # Keyframes may not exist when e.g. the media has no markers
+        keyframes = self._data.get('parameters', {}).get('toc', {}).get('keyframes', ())
+
+        for m in keyframes:
             marker_offset = FrameStamp(frame_number=m['time'],
                                        frame_rate=self._frame_rate)
 
