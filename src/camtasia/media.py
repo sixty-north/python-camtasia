@@ -41,7 +41,6 @@ class Media:
             marker_offset = FrameStamp(frame_number=m['time'],
                                        frame_rate=self._frame_rate)
 
-            print(marker_offset + self.media_start)
             yield Marker(name=m['value'],
                          time=self.start + (marker_offset - self.media_start))
 
