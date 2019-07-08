@@ -68,7 +68,8 @@ class MediaBin:
         if len(indices) == 0:
             raise ValueError(f'{media} is not contained in the media bin')
 
-        assert len(indices) == 1, 'There should never be two media in a media bin with the same id'
+        assert len(
+            indices) == 1, 'There should never be two media in a media bin with the same id'
 
         self._data.pop(indices[0])
 
@@ -77,7 +78,7 @@ class MediaBin:
 
         All imported media will be copied into a new directory under the 'media' subdirectory of the project structure.
 
-        Args: 
+        Args:
             file_path: Path to media to import.
 
         Raises:
@@ -172,4 +173,3 @@ def _datetime_to_str(dt):
 #        ]
 #      }
 #    ],
-

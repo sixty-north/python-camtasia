@@ -1,6 +1,7 @@
 """The Project class and related details.
 """
 
+from contextlib import contextmanager
 import json
 from pathlib import Path
 
@@ -66,3 +67,22 @@ def load_project(file_path):
     """
     file_path = Path(file_path).resolve()
     return Project(file_path)
+
+
+@contextmanager
+def use_project(file_path):
+    """Context manager for working with Projects.
+
+    This loads the project on enter. If the with-block exits normally then
+    this saves the project. If it exits exceptionally then edits are
+    discarded.
+
+    Args:
+        file_path: The path (pathlib.Path or str) to the Camtasia project.
+
+    Yields:
+        A new Project instance.
+    """
+    proj = load_project(file_path)
+    yield proj
+    proj.save()
