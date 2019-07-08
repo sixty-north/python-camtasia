@@ -87,7 +87,7 @@ class MediaBin:
             "lastMod": _datetime_to_str(timestamp),
             "sourceTracks": [
                 {
-                    "range": [0, int(track.get('frame_count', 1))],
+                    "range": [0, int(track.get('duration', 1))],
                     "type": _get_media_type(track),
                     "editRate": round(float(track.get('frame_rate', 600))),
                     "trackRect": media_rect,
@@ -109,7 +109,7 @@ def _get_media_type(track):
     "Maps a track's kind-of-stram to a Camtasia media type."
     return {
         'Image': 1,
-        'Movie': 0,
+        'Video': 0,
     }[track['kind_of_stream']]
 
 
