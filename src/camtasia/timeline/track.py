@@ -1,4 +1,4 @@
-from camtasia.media import Media
+from .media import Media
 
 
 class Track:

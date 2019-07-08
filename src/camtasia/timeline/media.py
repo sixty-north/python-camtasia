@@ -1,5 +1,5 @@
-from camtasia.frame_stamp import FrameStamp
-from camtasia.marker import Marker
+from ..frame_stamp import FrameStamp
+from .marker import Marker
 
 
 class Media:

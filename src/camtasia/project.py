@@ -1,14 +1,11 @@
 """The Project class and related details.
 """
 
-from typing import Iterable
 import json
 from pathlib import Path
 
 from camtasia.authoring_client import AuthoringClient
-from camtasia.frame_stamp import FrameStamp
-from camtasia.marker import Marker
-from camtasia.track import Track
+from camtasia.timeline import Timeline
 
 
 class Project:
@@ -20,8 +17,7 @@ class Project:
 
     def __init__(self, file_path):
         self._file_path = file_path
-        with (self.file_path / 'project.tscproj').open(mode='rt') as handle:
-            self._data = json.load(handle)
+        self._data = json.loads((self.file_path / 'project.tscproj').read_text())
 
     @property
     def file_path(self) -> Path:
@@ -39,17 +35,8 @@ class Project:
         return self._data['editRate']
 
     @property
-    def tracks(self) -> Iterable[Track]:
-        timeline_data = self._data['timeline']
-        for idx, attrs in enumerate(timeline_data['trackAttributes']):
-            # As far as I can tell, there's only ever one scene. Hence the 0.
-            data = timeline_data['sceneTrack']['scenes'][0]['csml']['tracks'][idx]
-            yield Track(attrs, data, self.edit_rate)
-
-    @property
-    def timeline_markers(self) -> Iterable[Marker]:
-        for frame in self._data['timeline']['parameters']['toc']['keyframes']:
-            yield Marker(name=frame['value'], time=FrameStamp(frame_number=frame['time'], frame_rate=self.edit_rate))
+    def timeline(self) -> Timeline:
+        return Timeline(self._data['timeline'], self.edit_rate)
 
     def __repr__(self):
         return f'Project(file_path="{self.file_path}")'
