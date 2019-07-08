@@ -3,11 +3,11 @@ from pathlib import Path
 
 
 def test_number_of_media(simple_video):
-    assert len(list(simple_video.media_bin.media)) == 2
+    assert len(list(simple_video.media_bin)) == 2
 
 
 def test_media_contents(simple_video):
-    media = list(simple_video.media_bin.media)
+    media = list(simple_video.media_bin)
 
     assert media[0].source == Path("./recordings/1559817572.462711/Rec 6-6-2019.trec")
     assert media[0].rect == (0, 0, 5120, 2880)  

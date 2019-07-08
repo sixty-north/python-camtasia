@@ -31,6 +31,8 @@ class Media:
 class MediaBin:
     """Represents the media-bin element of the UI.
 
+    You can iterate over the MediaBin to access its invidivual Media objects.
+
     Args:
         data: The 'sourceBin' subdict of the overall project dict.
         root_path: Path to root directory of project.
@@ -40,8 +42,7 @@ class MediaBin:
         self._data = media_bin_data
         self._root_path = root_path
 
-    @property
-    def media(self) -> Iterable[Media]:
+    def __iter__(self) -> Iterable[Media]:
         for record in self._data:
             yield Media(record)
 
