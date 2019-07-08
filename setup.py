@@ -54,6 +54,8 @@ setup(
     package_dir={'': 'src'},
     # package_data={'camtasia': . . .},
     install_requires=[
+        'exit-codes',
+        'docopt-subcommands',
         'pymediainfo',
     ],
     # List additional groups of dependencies here (e.g. development
@@ -65,9 +67,9 @@ setup(
         'test': ['hypothesis', 'pytest'],
     },
     entry_points={
-        # 'console_scripts': [
-        #    'camtasia = camtasia.cli:main',
-        # ],
+        'console_scripts': [
+           'pytsc = camtasia.cli:main',
+        ],
     },
     long_description=long_description,
 )
