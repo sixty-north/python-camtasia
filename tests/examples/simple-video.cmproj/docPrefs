@@ -15,7 +15,7 @@
 	<key>DocPrefMainSplitterValue</key>
 	<string>928.00000000000000000000</string>
 	<key>DocPrefPlayheadTime</key>
-	<string>120</string>
+	<string>0</string>
 	<key>DocPrefPreviewAutoFit</key>
 	<integer>0</integer>
 	<key>DocPrefPreviewScaleValue</key>

@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from camtasia.authoring_client import AuthoringClient
+from camtasia.media_bin import MediaBin
 from camtasia.timeline import Timeline
 
 
@@ -33,6 +34,10 @@ class Project:
     def edit_rate(self) -> int:
         "The editing framerate."
         return self._data['editRate']
+
+    @property
+    def media_bin(self) -> MediaBin:
+        return MediaBin(self._data['sourceBin'])
 
     @property
     def timeline(self) -> Timeline:
