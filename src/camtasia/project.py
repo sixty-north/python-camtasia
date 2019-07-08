@@ -18,12 +18,16 @@ class Project:
 
     def __init__(self, file_path):
         self._file_path = file_path
-        self._data = json.loads((self.file_path / 'project.tscproj').read_text())
+        self._data = json.loads(self._project_file.read_text())
 
     @property
     def file_path(self) -> Path:
         "The full path to the Camtasia project."
         return self._file_path
+
+    def save(self):
+        with self._project_file.open(mode='wt') as handle:
+            json.dump(self._data, handle)
 
     @property
     def authoring_client(self) -> AuthoringClient:
@@ -42,6 +46,11 @@ class Project:
     @property
     def timeline(self) -> Timeline:
         return Timeline(self._data['timeline'], self.edit_rate)
+
+    @property
+    def _project_file(self):
+        "The project's main JSON data file, i.e. the 'tscproj' file."
+        return self.file_path / 'project.tscproj'
 
     def __repr__(self):
         return f'Project(file_path="{self.file_path}")'
