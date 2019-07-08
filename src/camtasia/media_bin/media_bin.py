@@ -24,8 +24,15 @@ class Media:
         return datetime.datetime.strptime(
             self._data['lastMod'], '%Y%m%dT%H%M%S')
 
+    @property
+    def id(self):
+        return self._data['id']
+
     def __repr__(self):
         return f'Media(source="{self.source}")'
+
+    def __eq__(self, rhs):
+        return self.id == rhs.id
 
 
 class MediaBin:
@@ -45,6 +52,25 @@ class MediaBin:
     def __iter__(self) -> Iterable[Media]:
         for record in self._data:
             yield Media(record)
+
+    def remove(self, media: Media):
+        """Remove the specified Media from the MediaBin.
+
+        Args:
+            media: The Media object to remove. This must be a Media obtained through
+                this MediaBin.
+
+        Raises:
+            ValueError: `media` is not contained in this MediaBin.
+        """
+        indices = [idx for idx, m in enumerate(self) if m == media]
+
+        if len(indices) == 0:
+            raise ValueError(f'{media} is not contained in the media bin')
+
+        assert len(indices) == 1, 'There should never be two media in a media bin with the same id'
+
+        self._data.pop(indices[0])
 
     def import_media(self, file_path: Path):
         """Import new media into the project.
