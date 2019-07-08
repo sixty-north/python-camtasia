@@ -14,7 +14,7 @@ To work with an existing Camtasia project, first load it:
     import camtasia
     proj = camtasia.load_project('path/to/project.cmproj')
 
-The `media_bin` attribute of `Project` gives you access to elements in the media bin:
+The ``media_bin`` attribute of ``Project`` gives you access to elements in the media bin:
 
 .. code-block:: python
 
@@ -25,7 +25,7 @@ The `media_bin` attribute of `Project` gives you access to elements in the media
     # add a new media to the media bin
     proj.media_bin.import_media('path/to/image/or/movie.mov')
 
-The `timeline` attribute of `Project` gives you access to elements on the timeline:
+The ``timeline`` attribute of ``Project`` gives you access to elements on the timeline:
 
 .. code-block:: python
 
@@ -44,7 +44,7 @@ The `timeline` attribute of `Project` gives you access to elements on the timeli
             for marker in media.markers:
                 print(marker.name, marker.time)
 
-And if you have edits to the project that you want to write to disk, use the `save()` method:
+And if you have edits to the project that you want to write to disk, use the ``save()`` method:
 
 .. code-block:: python
 
