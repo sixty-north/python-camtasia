@@ -53,7 +53,9 @@ setup(
     include_package_data=True,
     package_dir={'': 'src'},
     # package_data={'camtasia': . . .},
-    install_requires=[],
+    install_requires=[
+        'pymediainfo',
+    ],
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax, for
     # example: $ pip install -e .[dev,test]
