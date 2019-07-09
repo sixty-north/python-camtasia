@@ -14,7 +14,7 @@ def media_bin_ls(_, args):
     List the contents of the media bin.
     """
     project_dir = args['<project>']
-    with use_project(project_dir) as proj:
+    with use_project(project_dir, save_on_exit=False) as proj:
         for media in proj.media_bin:
             print(f'{media.id} {media.source}')
 
@@ -64,7 +64,7 @@ def tracks_ls(_, args):
     List the tracks in the timeline.
     """
     project_dir = args['<project>']
-    with use_project(project_dir) as proj:
+    with use_project(project_dir, save_on_exit=False) as proj:
         for track in proj.timeline.tracks:
             print(f'{track.index} name={track.name} muted={track.audio_muted} hidden={track.video_hidden}')
 
