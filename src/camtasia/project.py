@@ -4,6 +4,8 @@
 from contextlib import contextmanager
 import json
 from pathlib import Path
+import pkg_resources
+import shutil
 
 from camtasia.authoring_client import AuthoringClient
 from camtasia.media_bin import MediaBin
@@ -88,3 +90,11 @@ def use_project(file_path, save_on_exit=True):
 
     if save_on_exit:
         proj.save()
+
+
+def new_project(file_path):
+    """Create a new, empty project at `file_path`.
+    """
+    project_template_dir = pkg_resources.resource_filename('camtasia', 'resources/new.cmproj')
+    shutil.copytree(project_template_dir, file_path)
+    
