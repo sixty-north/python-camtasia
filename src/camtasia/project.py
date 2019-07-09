@@ -42,7 +42,7 @@ class Project:
 
     @property
     def media_bin(self) -> MediaBin:
-        return MediaBin(self._data['sourceBin'], self._file_path)
+        return MediaBin(self._data.setdefault('sourceBin', []), self._file_path)
 
     @property
     def timeline(self) -> Timeline:

@@ -1,1 +1,1 @@
-from .media_bin import MediaBin  # noqa: F401
+from .media_bin import MediaBin, MediaType  # noqa: F401

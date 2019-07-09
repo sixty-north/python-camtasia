@@ -1,10 +1,17 @@
 import datetime
+from enum import Enum
 from pathlib import Path
 import shutil
 from typing import Iterable
 
 from pymediainfo import MediaInfo
 from xml.etree.ElementTree import ParseError
+
+
+class MediaType(Enum):
+    # NB: These must match camtasia's codes for media types.
+    Video = 0
+    Image = 1
 
 
 class Media:
@@ -14,6 +21,14 @@ class Media:
     @property
     def source(self):
         return Path(self._data['src'])
+
+    @property
+    def identity(self):
+        return self.source.stem
+
+    @property
+    def type(self):
+        return MediaType(self._data['sourceTracks'][0]['type'])
 
     @property
     def rect(self):
@@ -46,11 +61,30 @@ class MediaBin:
         self._data = media_bin_data
         self._root_path = root_path
 
-    def __iter__(self) -> Iterable[Media]:
+    def __iter__(self) -> Iterable[Media]: 
+        """Get iterator of Media instances in this bin.
+        """
         for record in self._data:
             yield Media(record)
 
-    def remove(self, media_id: int):
+    def __getitem__(self, media_id):
+        """Get the media with the specified ID.
+
+        Args:
+            media_id: ID of the media to get.
+
+        Returns: A Media instance.
+
+        Raises:
+            KeyError: The specified media is not contained in this MediaBin.
+        """
+        for media in self:
+            if media.id == media_id:
+                return media
+
+        raise KeyError('No media with id {}'.format(media_id))
+
+    def __delitem__(self, media_id):
         """Remove the specified Media from the MediaBin.
 
         Args:
@@ -59,14 +93,13 @@ class MediaBin:
         Raises:
             KeyError: The specified media is not contained in this MediaBin.
         """
-        indices = [idx for idx, m in enumerate(self) if m.id == media_id]
+ 
+        for idx, record in enumerate(self._data):
+            if record['id'] == media_id:
+                self._data.pop(idx)
+                return
 
-        if len(indices) == 0:
-            raise KeyError(f'No media with id {media_id} in the media bin')
-
-        assert len(indices) == 1, 'There should never be two media in a media bin with the same id'
-
-        self._data.pop(indices[0])
+        raise KeyError('No media with id{}'.format(media_id))
 
     def import_media(self, file_path: Path):
         """Import new media into the project.
@@ -112,7 +145,7 @@ class MediaBin:
                 {
                     "range": [0, int(track.get('duration', 1))],
                     "type": _get_media_type(track),
-                    "editRate": round(float(track.get('frame_rate', 600))),
+                    "editRate": 1000,  # TODO: Not sure what this is! round(float(track.get('frame_rate', 600))),
                     "trackRect": media_rect,
                     "sampleRate": 0,
                     "bitDepth": track.get('bit_depth', 0),
@@ -127,12 +160,14 @@ class MediaBin:
             ]
         })
 
+        return self[next_media_id]
+
 
 def _get_media_type(track):
-    "Maps a track's kind-of-stram to a Camtasia media type."
+    "Maps a track's kind-of-stream to a Camtasia media type."
     return {
-        'Image': 1,
-        'Video': 0,
+        'Image': MediaType.Image.value,
+        'Video': MediaType.Video.value,
     }[track['kind_of_stream']]
 
 
