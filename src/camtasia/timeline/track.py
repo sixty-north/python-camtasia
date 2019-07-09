@@ -31,19 +31,73 @@ class Track:
 
     def add_media(self, bin_media, start):
         if bin_media.type == MediaType.Image:
-            self._add_image(bin_media, start)
+            record = self._image_record(bin_media, start)
         elif bin_media.type == MediaType.Video:
-            pass
+            record = self._video_record(bin_media, start)
         else:
             raise ValueError(
                 'Unsupported media type: {}'.format(bin_media.type))
 
+        # TODO: Check that it doesn't overlap something else on the timeline.
+
+        self._data['medias'].append(record)
+
     def _next_media_id(self):
-        max_media_id = max((rec['id'] for rec in self._data['medias']), default=0)
+        max_media_id = max((rec['id']
+                            for rec in self._data['medias']), default=0)
         return max_media_id + 1
 
-    def _add_image(self, bin_media, start):
-        record = {
+    def _video_record(self, bin_media, start):
+        return {
+            "id": self._next_media_id(),
+            "_type": "ScreenVMFile",
+            "src": 1,
+            "trackNumber": 0,  # TODO: Is this correct? What is this?
+            "attributes": {
+                "ident": bin_media.identity
+            },
+            "parameters": {
+                "scale0": {
+                    "type": "double",
+                            "defaultValue": 0.25,
+                            "interp": "eioe"
+                },
+                "scale1": {
+                    "type": "double",
+                            "defaultValue": 0.25,
+                            "interp": "eioe"
+                },
+                "cursorScale": {
+                    "type": "double",
+                            "defaultValue": 1.0,
+                            "interp": "linr"
+                },
+                "cursorOpacity": {
+                    "type": "double",
+                            "defaultValue": 1.0,
+                            "interp": "linr"
+                }
+            },
+            "effects": [
+
+            ],
+            "start": start,
+            "duration": bin_media.range[1],
+            "mediaStart": bin_media.range[0],
+            "mediaDuration": bin_media.range[1],
+            "scalar": 1,
+            "metadata": {
+                "clipSpeedAttribute": False,
+                "default-scale": "0.25",
+                "effectApplied": "none"
+            },
+            "animationTracks": {
+
+            }
+        }
+
+    def _image_record(self, bin_media, start):
+        return {
             "id": self._next_media_id(),
             "_type": "IMFile",
             "src": bin_media.id,
@@ -55,7 +109,7 @@ class Track:
             "parameters": {
                 "scale0": {
                     "type": "double",
-                            "defaultValue": 1.0, 
+                            "defaultValue": 1.0,
                             "interp": "eioe"
                 },
                 "scale1": {
@@ -68,9 +122,9 @@ class Track:
 
             ],
             "start": start,
-            "duration": 150,
-            "mediaStart": 0,
-            "mediaDuration": 1,
+            "duration": 150,  # This seems to be camtasia's behavior. 
+            "mediaStart": bin_media.range[0],
+            "mediaDuration": bin_media.range[1],
             "scalar": 1,
             "metadata": {
                 "clipSpeedAttribute": False,
@@ -82,62 +136,5 @@ class Track:
             }
         }
 
-        # TODO: Check that it doesn't overlap something else on the timeline.
-
-        self._data['medias'].append(record)
-
     def __repr__(self):
         return f'Track(name="{self.name}")'
-
-# Example of image file
-#
-
-# Example of screen-recording
-#
-# {
-#                     "id" : 6,
-#                     "_type" : "ScreenVMFile",
-#                     "src" : 1,
-#                     "trackNumber" : 0,
-#                     "attributes" : {
-#                       "ident" : "fnord"
-#                     },
-#                     "parameters" : {
-#                       "scale0" : {
-#                         "type" : "double",
-#                         "defaultValue" : 0.25,
-#                         "interp" : "eioe"
-#                       },
-#                       "scale1" : {
-#                         "type" : "double",
-#                         "defaultValue" : 0.25,
-#                         "interp" : "eioe"
-#                       },
-#                       "cursorScale" : {
-#                         "type" : "double",
-#                         "defaultValue" : 1.0,
-#                         "interp" : "linr"
-#                       },
-#                       "cursorOpacity" : {
-#                         "type" : "double",
-#                         "defaultValue" : 1.0,
-#                         "interp" : "linr"
-#                       }
-#                     },
-#                     "effects" : [
-
-#                     ],
-#                     "start" : 1070,
-#                     "duration" : 1032,
-#                     "mediaStart" : 0,
-#                     "mediaDuration" : 1032,
-#                     "scalar" : 1,
-#                     "metadata" : {
-#                       "clipSpeedAttribute" : false,
-#                       "default-scale" : "0.25",
-#                       "effectApplied" : "none"
-#                     },
-#                     "animationTracks" : {
-
-#                     }
-#                   }
