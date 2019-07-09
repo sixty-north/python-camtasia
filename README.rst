@@ -49,3 +49,15 @@ And if you have edits to the project that you want to write to disk, use the ``s
 .. code-block:: python
 
     proj.save()
+
+``pytsc``
+=========
+
+The package also installs a command-line program called ``pytsc`` which exposes a lot of the API. You can
+get help on ``pytsc`` with the "-h" flag::
+
+    $ pytsc -h
+
+You can also get help on particular subcommands by putting "-h" after the subcommand name::
+
+    $ pytsc tracks-ls -h
