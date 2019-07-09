@@ -54,7 +54,7 @@ setup(
     package_dir={'': 'src'},
     # package_data={'camtasia': . . .},
     install_requires=[
-        'exit-codes',
+        'exit-codes >=1.3.0, < 2.0.0',
         'docopt-subcommands',
         'pymediainfo',
     ],
