@@ -2,14 +2,14 @@ from pathlib import Path
 import sys
 
 import docopt_subcommands as dsc
-from exit_codes import ExitCode
+from exit_codes import ExitCode, ExitCodeError
 
 from camtasia import use_project
 
 
 @dsc.command()
-def list_media_bin(_, args):
-    """usage: {program} list-media-bin <project>
+def media_bin_ls(_, args):
+    """usage: {program} media-bin-ls <project>
 
     List the contents of the media bin.
     """
@@ -22,8 +22,27 @@ def list_media_bin(_, args):
 
 
 @dsc.command()
-def import_media(_, args):
-    """usage: {program} import-media <project> <media-file>
+def media_bin_rm(_, args):
+    """usage: {program} media-bin-rm <project> <media-id>
+
+    Remove a media from the media bin by ID.
+    """
+    project_dir = args['<project>']
+
+    try:
+        media_id = int(args['<media-id>'])
+    except ValueError:
+        return ExitCode.USAGE
+
+    with use_project(project_dir) as proj:
+        proj.media_bin.remove(media_id)
+
+    return ExitCode.OK
+
+
+@dsc.command()
+def media_bin_import(_, args):
+    """usage: {program} media-bin-import <project> <media-file>
 
     Import media into a project.
     """
@@ -38,9 +57,6 @@ def import_media(_, args):
 
 
 def main(argv=None):
-    if argv is None:
-        argv = sys.argv
-
     try:
         return dsc.main('pytsc', argv=argv)
     except ExitCodeError as exc:
@@ -48,14 +64,5 @@ def main(argv=None):
         return exc.code
 
 
-class ExitCodeError(Exception):
-    def __init__(self, msg, code):
-        super().__init__(msg)
-        self.code = code
-
-    def __repr__(self):
-        return f'ExitCodeError("{self.args[0]}", {self.code})'
-
-
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
