@@ -124,6 +124,28 @@ def timeline_markers_ls(_, args):
             print(f'{marker.name} {marker.time.frame_number} {marker.time}')
 
 
+@dsc.command()
+def track_markers_ls(_, args):
+    """usage: {program} track-markers-ls <project> [<track-index>]
+
+    List all track markers, or just those for a specific track.
+    """
+    project_dir = args['<project>']
+    track_index = None if args['<track-index>'] is None else int(args['<track-index>'])
+
+    with use_project(project_dir, save_on_exit=False) as proj:
+        if track_index is None:
+            tracks = proj.timeline.tracks
+        else:
+            tracks = [proj.timeline.tracks[track_index]]
+
+        for track in tracks:
+            for media in track.medias:
+                for marker in media.markers:
+                    print(marker.name, marker.time.frame_number, marker.time)
+
+
+
 def main(argv=None):
     try:
         return dsc.main('pytsc', argv=argv)
