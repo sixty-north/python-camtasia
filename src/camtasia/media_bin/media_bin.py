@@ -35,6 +35,12 @@ class Media:
         return tuple(self._data['rect'])
 
     @property
+    def range(self):
+        """The start and stop frame of the media as a `(start, stop)` tuple.
+        """
+        return tuple(self._data['sourceTracks'][0]['range'])
+
+    @property
     def last_modification(self):
         return datetime.datetime.strptime(
             self._data['lastMod'], '%Y%m%dT%H%M%S')
