@@ -4,7 +4,16 @@ import sys
 import docopt_subcommands as dsc
 from exit_codes import ExitCode, ExitCodeError
 
-from camtasia import use_project
+from camtasia import new_project, use_project
+
+
+@dsc.command()
+def new_project_handler(_, args):
+    """usage: {program} new-project <project>
+
+    Create a new, empty project.
+    """
+    new_project(args['<project>'])
 
 
 @dsc.command()
