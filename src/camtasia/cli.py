@@ -123,6 +123,8 @@ def timeline_markers_ls(_, args):
         for marker in proj.timeline.markers:
             print(f'{marker.name} {marker.time.frame_number} {marker.time}')
 
+    return ExitCode.OK
+
 
 @dsc.command()
 def track_markers_ls(_, args):
@@ -144,6 +146,7 @@ def track_markers_ls(_, args):
                 for marker in media.markers:
                     print(marker.name, marker.time.frame_number, marker.time)
 
+    return ExitCode.OK
 
 
 def main(argv=None):
