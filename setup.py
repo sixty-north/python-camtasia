@@ -50,9 +50,9 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
     ],
     platforms='any',
-    include_package_data=True,
+    # include_package_data=True,
     package_dir={'': 'src'},
-    # package_data={'camtasia': . . .},
+    package_data={'camtasia': ['resources/**']},
     install_requires=[
         'exit-codes >=1.3.0, < 2.0.0',
         'docopt-subcommands',
