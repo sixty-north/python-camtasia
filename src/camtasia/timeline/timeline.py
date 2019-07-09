@@ -26,7 +26,7 @@ class Timeline:
     def markers(self) -> Iterable[Marker]:
         """Markers on the timeline (i.e. not media-specific markers)
         """
-        for frame in self._data['parameters']['toc']['keyframes']:
+        for frame in self._data.get('parameters', {}).get('toc', {}).get('keyframes', ()):
             yield Marker(name=frame['value'], time=FrameStamp(frame_number=frame['time'], frame_rate=self._frame_rate))
 
     # TODO: Support for editing markers
