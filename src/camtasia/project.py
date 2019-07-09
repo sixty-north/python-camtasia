@@ -70,19 +70,21 @@ def load_project(file_path):
 
 
 @contextmanager
-def use_project(file_path):
+def use_project(file_path, save_on_exit=True):
     """Context manager for working with Projects.
 
-    This loads the project on enter. If the with-block exits normally then
-    this saves the project. If it exits exceptionally then edits are
-    discarded.
+    This loads the project on enter. If the with-block exits normally and `save_on_exit` is true, then this saves the
+    project. If it exits exceptionally then edits are discarded.
 
-    Args:
+    Args: 
         file_path: The path (pathlib.Path or str) to the Camtasia project.
+        save_on_exit: Whether to save the project on normal exit.
 
-    Yields:
-        A new Project instance.
+    Yields: A new Project instance.
     """
     proj = load_project(file_path)
+
     yield proj
-    proj.save()
+
+    if save_on_exit:
+        proj.save()
