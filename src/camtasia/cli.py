@@ -110,6 +110,19 @@ def track_add_media(_, args):
 
 # TODO: Markers
 
+@dsc.command()
+def timeline_markers_ls(_, args):
+    """usage: {program} timeline-markers-ls <project>
+
+    List the timeline markers.
+    """
+ 
+    project_dir = args['<project>']
+
+    with use_project(project_dir, save_on_exit=False) as proj:
+        for marker in proj.timeline.markers:
+            print(f'{marker.name} {marker.time.frame_number} {marker.time}')
+
 
 def main(argv=None):
     try:
