@@ -7,6 +7,7 @@ class Track:
         self._attributes = attributes
         self._data = data
         self._frame_rate = frame_rate
+        self._medias = _Medias(data, frame_rate)
 
     @property
     def name(self):
@@ -26,8 +27,43 @@ class Track:
 
     @property
     def medias(self):
+        return self._medias
+
+    def __repr__(self):
+        return f'Track(name="{self.name}")'
+
+
+class _Medias:
+    def __init__(self, data, frame_rate):
+        self._data = data
+        self._frame_rate = frame_rate
+
+    def __iter__(self):
         for media_data in self._data['medias']:
             yield TrackMedia(media_data, self._frame_rate)
+
+    def __getitem__(self, media_id):
+        """Get a TrackMedia by ID.
+
+        Args:
+            media_id: The ID of the media to get.
+
+        Returns: A TrackMedia instance.
+
+        Raises:
+            KeyError: There is no TrackMedia with the given ID.
+        """
+        for media in self:
+            if media.id == media_id:
+                return media
+
+        raise KeyError(f'No TrackMedia with id={media_id}')
+
+    def __delitem__(self, media_id):
+        if not any(m.id == media_id for m in self):
+            raise KeyError(f'No TrackMedia with id={media_id}')
+
+        self._data['medias'] = [m for m in self if m.id != media_id]
 
     def add_media(self, bin_media, start):
         if bin_media.type == MediaType.Image:
@@ -136,5 +172,3 @@ class Track:
             }
         }
 
-    def __repr__(self):
-        return f'Track(name="{self.name}")'

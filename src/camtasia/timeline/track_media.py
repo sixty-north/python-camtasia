@@ -33,6 +33,11 @@ class TrackMedia:
         self._frame_rate = frame_rate
 
     @property
+    def id(self):
+        """ID of the media entry on the track."""
+        return self._data['id']
+
+    @property
     def markers(self):
         # Keyframes may not exist when e.g. the media has no markers
         keyframes = self._data.get('parameters', {}).get('toc', {}).get('keyframes', ())
