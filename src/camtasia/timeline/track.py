@@ -1,4 +1,4 @@
-from .media import Media
+from .track_media import TrackMedia
 from camtasia.media_bin import MediaType
 
 
@@ -27,7 +27,7 @@ class Track:
     @property
     def medias(self):
         for media_data in self._data['medias']:
-            yield Media(media_data, self._frame_rate)
+            yield TrackMedia(media_data, self._frame_rate)
 
     def add_media(self, bin_media, start):
         if bin_media.type == MediaType.Image:

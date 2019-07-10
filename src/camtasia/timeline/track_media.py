@@ -2,8 +2,8 @@ from ..frame_stamp import FrameStamp
 from .marker import Marker
 
 
-class Media:
-    """Individual media elements on the timeline.
+class TrackMedia:
+    """Individual media elements on a track on the timeline.
 
     The relationship between the underlying media and that visible on the timeline on the timeline is a bit involved:
 
@@ -60,6 +60,12 @@ class Media:
     def duration(self):
         return FrameStamp(frame_number=self._data['duration'],
                           frame_rate=self._frame_rate)
+
+    @property
+    def source(self):
+        """ID of the media-bin source for this media.
+        """
+        return self._data['src']
 
     def __repr__(self):
         return f'Media(start={self.start}, duration={self.duration})'
