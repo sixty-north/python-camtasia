@@ -14,7 +14,7 @@ class Timeline:
     def __init__(self, timeline_data):
         self._data = timeline_data
 
-        self._tracks = _Tracks(self._data)
+        self._tracks = _Tracks(self._data, self)
 
     @property
     def tracks(self):
@@ -34,8 +34,9 @@ class _Tracks:
     """Container for Tracks.
     """
 
-    def __init__(self, data):
+    def __init__(self, data, timeline):
         self._data = data
+        self._timeline = timeline
 
     def __len__(self):
         return len(self._track_list)
@@ -44,7 +45,7 @@ class _Tracks:
         for idx, attrs in enumerate(self._data['trackAttributes']):
             # As far as I can tell, there's only ever one scene. Hence the 0.
             data = self._track_list[idx]
-            yield Track(attrs, data)
+            yield Track(attrs, data, self._timeline)
 
     def __getitem__(self, track_index):
         for track in self:

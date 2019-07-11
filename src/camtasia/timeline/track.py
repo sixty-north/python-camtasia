@@ -3,10 +3,18 @@ from camtasia.media_bin import MediaType
 
 
 class Track:
-    def __init__(self, attributes, data):
+    """A track on the timeline.
+
+    Args:
+        attributes: The 'trackAttributes' record for this track.
+        data: the entry in the 'timeline' record for this track.
+        timeline: The Timeline instance containing this Track.
+    """
+
+    def __init__(self, attributes, data, timeline):
         self._attributes = attributes
         self._data = data
-        self._medias = _Medias(data)
+        self._medias = _Medias(data, timeline)
 
     @property
     def name(self):
@@ -33,8 +41,12 @@ class Track:
 
 
 class _Medias:
-    def __init__(self, data):
+    """Collection of medias on a specific track.
+    """
+
+    def __init__(self, data, timeline):
         self._data = data
+        self._timeline = timeline
 
     def __iter__(self):
         for media_data in self._data['medias']:
@@ -77,15 +89,18 @@ class _Medias:
         self._data['medias'].append(record)
 
     def _next_media_id(self):
-        max_media_id = max((rec['id']
-                            for rec in self._data['medias']), default=0)
+        max_media_id = max((media.id
+                            for track in self._timeline.tracks
+                            for media in track.medias),
+                           default=0)
+
         return max_media_id + 1
 
     def _video_record(self, bin_media, start):
         return {
             "id": self._next_media_id(),
             "_type": "ScreenVMFile",
-            "src": 1,
+            "src": bin_media.id,
             "trackNumber": 0,  # TODO: Is this correct? What is this?
             "attributes": {
                 "ident": bin_media.identity
@@ -156,7 +171,7 @@ class _Medias:
 
             ],
             "start": start,
-            "duration": 150,  # This seems to be camtasia's behavior. 
+            "duration": 150,  # This seems to be camtasia's behavior.
             "mediaStart": bin_media.range[0],
             "mediaDuration": bin_media.range[1],
             "scalar": 1,
@@ -169,4 +184,3 @@ class _Medias:
 
             }
         }
-
