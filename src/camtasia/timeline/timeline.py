@@ -40,10 +40,13 @@ class _Tracks:
         self._data = data
         self._frame_rate = frame_rate
 
+    def __len__(self):
+        return len(self._track_list)
+
     def __iter__(self):
         for idx, attrs in enumerate(self._data['trackAttributes']):
             # As far as I can tell, there's only ever one scene. Hence the 0.
-            data = self._data['sceneTrack']['scenes'][0]['csml']['tracks'][idx]
+            data = self._track_list[idx]
             yield Track(attrs, data, self._frame_rate)
 
     def __getitem__(self, track_index):
@@ -57,10 +60,41 @@ class _Tracks:
         for idx, track in enumerate(self):
             if track.index == track_index:
                 self._data['trackAttributes'].pop(idx)
-                self._data['sceneTrack']['scenes'][0]['csml']['tracks'].pop(
+                self._track_list.pop(
                     idx)
                 return
 
         raise KeyError('No track with index {}'.format(track_index))
 
-    # TODO: Insert new track
+    @property
+    def _track_list(self):
+        return self._data['sceneTrack']['scenes'][0]['csml']['tracks']
+
+    def insert_track(self, index, name):
+        record = {
+            "trackIndex": index,
+            "medias": [
+            ]
+        }
+
+        attributes_record = {
+            "ident": name,
+            "audioMuted": False,
+            "videoHidden": False,
+            "magnetic": False,
+            "metadata": {
+                "IsLocked": "False",
+                "trackHeight": "33"
+            }
+        }
+
+        self._track_list.insert(index, record)
+
+        self._data['trackAttributes'].insert(index, attributes_record)
+
+        # Unfortunately, camtasia uses track index as the ID for tracks. So as we insert tracks, we need to manually
+        # update the track indices since we may have messed them up.
+        for index, record in enumerate(self._track_list):
+            record['trackIndex'] = index
+
+        return self[index]

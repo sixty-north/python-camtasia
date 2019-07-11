@@ -115,6 +115,8 @@ class MediaBin:
         Args:
             file_path: Path to media to import.
 
+        Returns: A Media instance for the newly imported media.
+
         Raises:
             FileExistsError: Destination media directory already exists.
             FileNotFoundError: `file_path` does not exist.

@@ -91,6 +91,26 @@ def tracks_ls(_, args):
 
 
 @dsc.command()
+def tracks_insert(_, args):
+    """usage: {program} tracks-insert <project> <name> [<index>]
+
+    Insert a new track at the specified index.
+    """
+    project_dir = args['<project>']
+    index = args['<index>']
+
+    with use_project(project_dir) as proj:
+        if index is None:
+            index = len(proj.timeline.tracks)
+        index = int(index)
+        proj.timeline.tracks.insert_track(index, args['<name>'])
+
+    return ExitCode.OK
+
+
+
+
+@dsc.command()
 def track_add_media(_, args):
     """usage: {program} track-add-media <project> <track-index> <media-id> <start>
 
