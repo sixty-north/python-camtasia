@@ -1,6 +1,5 @@
 from itertools import islice
 
-from camtasia.frame_stamp import FrameStamp
 from camtasia.timeline.marker import Marker
 
 
@@ -20,10 +19,8 @@ def test_first_track_medias(simple_video):
     media = next(islice(track.medias, 1))
     markers = sorted(media.markers, key=lambda x: x.time)
     assert markers == [
-        Marker(time=FrameStamp(60, simple_video.edit_rate),
-               name='media-marker-1'),
-        Marker(time=FrameStamp(120, simple_video.edit_rate),
-               name='media-marker-2'),
+        Marker(time=60, name='media-marker-1'),
+        Marker(time=120, name='media-marker-2'),
     ]
 
 
@@ -37,10 +34,10 @@ def test_second_media_markers_are_empty(simple_video):
 def test_timeline_markers(simple_video):
     markers = sorted(simple_video.timeline.markers, key=lambda x: x.time)
     assert markers == [
-        Marker(time=FrameStamp(150, simple_video.edit_rate), name='marker-1'),
-        Marker(time=FrameStamp(300, simple_video.edit_rate), name='marker-2'),
-        Marker(time=FrameStamp(450, simple_video.edit_rate), name='marker-3'),
-        Marker(time=FrameStamp(600, simple_video.edit_rate), name='marker-4'),
-        Marker(time=FrameStamp(750, simple_video.edit_rate), name='marker-5'),
-        Marker(time=FrameStamp(900, simple_video.edit_rate), name='marker-6'),
+        Marker(time=150, name='marker-1'),
+        Marker(time=300, name='marker-2'),
+        Marker(time=450, name='marker-3'),
+        Marker(time=600, name='marker-4'),
+        Marker(time=750, name='marker-5'),
+        Marker(time=900, name='marker-6'),
     ]

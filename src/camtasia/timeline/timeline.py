@@ -1,6 +1,5 @@
 from typing import Iterable
 
-from ..frame_stamp import FrameStamp
 from .marker import Marker
 from .track import Track
 
@@ -12,11 +11,10 @@ class Timeline:
         timeline_data: The 'timeline' sub-dict of the full (i.e. tscproj file) project dict.
     """
 
-    def __init__(self, timeline_data, frame_rate):
+    def __init__(self, timeline_data):
         self._data = timeline_data
-        self._frame_rate = frame_rate
 
-        self._tracks = _Tracks(self._data, self._frame_rate)
+        self._tracks = _Tracks(self._data)
 
     @property
     def tracks(self):
@@ -27,7 +25,7 @@ class Timeline:
         """Markers on the timeline (i.e. not media-specific markers)
         """
         for frame in self._data.get('parameters', {}).get('toc', {}).get('keyframes', ()):
-            yield Marker(name=frame['value'], time=FrameStamp(frame_number=frame['time'], frame_rate=self._frame_rate))
+            yield Marker(name=frame['value'], time=frame['time'])
 
     # TODO: Support for editing markers
 
@@ -36,9 +34,8 @@ class _Tracks:
     """Container for Tracks.
     """
 
-    def __init__(self, data, frame_rate):
+    def __init__(self, data):
         self._data = data
-        self._frame_rate = frame_rate
 
     def __len__(self):
         return len(self._track_list)
@@ -47,7 +44,7 @@ class _Tracks:
         for idx, attrs in enumerate(self._data['trackAttributes']):
             # As far as I can tell, there's only ever one scene. Hence the 0.
             data = self._track_list[idx]
-            yield Track(attrs, data, self._frame_rate)
+            yield Track(attrs, data)
 
     def __getitem__(self, track_index):
         for track in self:

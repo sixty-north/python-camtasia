@@ -1,4 +1,3 @@
-from ..frame_stamp import FrameStamp
 from .marker import Marker
 
 
@@ -28,9 +27,8 @@ class TrackMedia:
 
         start + (marker_time - media_start)
     """
-    def __init__(self, media_data, frame_rate):
+    def __init__(self, media_data):
         self._data = media_data
-        self._frame_rate = frame_rate
 
     @property
     def id(self):
@@ -43,8 +41,7 @@ class TrackMedia:
         keyframes = self._data.get('parameters', {}).get('toc', {}).get('keyframes', ())
 
         for m in keyframes:
-            marker_offset = FrameStamp(frame_number=m['time'],
-                                       frame_rate=self._frame_rate)
+            marker_offset = m['time']
 
             yield Marker(name=m['value'],
                          time=self.start + (marker_offset - self.media_start))
@@ -52,19 +49,16 @@ class TrackMedia:
     @property
     def start(self):
         "The offset on the timeline at which the visible media starts."
-        return FrameStamp(frame_number=self._data['start'],
-                          frame_rate=self._frame_rate)
+        return self._data['start']
 
     @property
     def media_start(self):
         "The offset into the underlying media at which the visible media starts."
-        return FrameStamp(frame_number=self._data['mediaStart'],
-                          frame_rate=self._frame_rate)
+        return self._data['mediaStart']
 
     @property
     def duration(self):
-        return FrameStamp(frame_number=self._data['duration'],
-                          frame_rate=self._frame_rate)
+        return self._data['duration']
 
     @property
     def source(self):

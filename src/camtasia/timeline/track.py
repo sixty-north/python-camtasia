@@ -3,11 +3,10 @@ from camtasia.media_bin import MediaType
 
 
 class Track:
-    def __init__(self, attributes, data, frame_rate):
+    def __init__(self, attributes, data):
         self._attributes = attributes
         self._data = data
-        self._frame_rate = frame_rate
-        self._medias = _Medias(data, frame_rate)
+        self._medias = _Medias(data)
 
     @property
     def name(self):
@@ -34,13 +33,12 @@ class Track:
 
 
 class _Medias:
-    def __init__(self, data, frame_rate):
+    def __init__(self, data):
         self._data = data
-        self._frame_rate = frame_rate
 
     def __iter__(self):
         for media_data in self._data['medias']:
-            yield TrackMedia(media_data, self._frame_rate)
+            yield TrackMedia(media_data)
 
     def __getitem__(self, media_id):
         """Get a TrackMedia by ID.

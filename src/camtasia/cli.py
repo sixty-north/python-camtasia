@@ -6,6 +6,7 @@ from exit_codes import ExitCode, ExitCodeError
 
 from camtasia import new_project, use_project
 from camtasia import operations
+from camtasia.frame_stamp import FrameStamp
 
 
 @dsc.command()
@@ -143,7 +144,7 @@ def timeline_markers_ls(_, args):
 
     with use_project(project_dir, save_on_exit=False) as proj:
         for marker in proj.timeline.markers:
-            print(f'{marker.name} {marker.time.frame_number} {marker.time}')
+            print(f'{marker.name} {marker.time} {FrameStamp(marker.time, proj.edit_rate)}')
 
     return ExitCode.OK
 
@@ -166,7 +167,7 @@ def track_markers_ls(_, args):
         for track in tracks:
             for media in track.medias:
                 for marker in media.markers:
-                    print(marker.name, marker.time.frame_number, marker.time)
+                    print(marker.name, marker.time, FrameStamp(marker.time, proj.edit_rate))
 
     return ExitCode.OK
 
@@ -189,7 +190,7 @@ def track_media_ls(_, args):
         for track in tracks:
             for media in track.medias:
                 source_media = proj.media_bin[media.source]
-                print(f'{media.id} {media.start.frame_number} {media.duration.frame_number} {source_media.identity}')
+                print(f'{media.id} {media.start} {media.duration} {source_media.identity}')
 
     return ExitCode.OK
 

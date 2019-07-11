@@ -48,7 +48,7 @@ class Project:
 
     @property
     def timeline(self) -> Timeline:
-        return Timeline(self._data['timeline'], self.edit_rate)
+        return Timeline(self._data['timeline'])
 
     @property
     def _project_file(self):
