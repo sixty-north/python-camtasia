@@ -10,6 +10,7 @@ from xml.etree.ElementTree import ParseError
 
 class MediaType(Enum):
     # NB: These must match camtasia's codes for media types.
+    # TODO: Audio
     Video = 0
     Image = 1
 
