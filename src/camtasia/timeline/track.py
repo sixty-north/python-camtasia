@@ -48,6 +48,9 @@ class _Medias:
         self._data = data
         self._timeline = timeline
 
+    def __len__(self):
+        return len(self._data['medias'])
+
     def __iter__(self):
         for media_data in self._data['medias']:
             yield TrackMedia(media_data)
