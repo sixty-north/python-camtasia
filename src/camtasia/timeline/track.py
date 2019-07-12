@@ -75,11 +75,11 @@ class _Medias:
 
         self._data['medias'] = [m for m in self if m.id != media_id]
 
-    def add_media(self, bin_media, start):
+    def add_media(self, bin_media, start, duration=None):
         if bin_media.type == MediaType.Image:
-            record = self._image_record(bin_media, start)
+            record = self._image_record(bin_media, start, duration)
         elif bin_media.type == MediaType.Video:
-            record = self._video_record(bin_media, start)
+            record = self._video_record(bin_media, start, duration)
         else:
             raise ValueError(
                 'Unsupported media type: {}'.format(bin_media.type))
@@ -96,7 +96,7 @@ class _Medias:
 
         return max_media_id + 1
 
-    def _video_record(self, bin_media, start):
+    def _video_record(self, bin_media, start, duration):
         return {
             "id": self._next_media_id(),
             "_type": "ScreenVMFile",
@@ -131,7 +131,7 @@ class _Medias:
 
             ],
             "start": start,
-            "duration": bin_media.range[1],
+            "duration": bin_media.range[1] if duration is None else duration,
             "mediaStart": bin_media.range[0],
             "mediaDuration": bin_media.range[1],
             "scalar": 1,
@@ -145,7 +145,7 @@ class _Medias:
             }
         }
 
-    def _image_record(self, bin_media, start):
+    def _image_record(self, bin_media, start, duration):
         return {
             "id": self._next_media_id(),
             "_type": "IMFile",
@@ -171,7 +171,7 @@ class _Medias:
 
             ],
             "start": start,
-            "duration": 150,  # This seems to be camtasia's behavior.
+            "duration": 150 if duration is None else duration,
             "mediaStart": bin_media.range[0],
             "mediaDuration": bin_media.range[1],
             "scalar": 1,
