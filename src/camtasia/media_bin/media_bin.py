@@ -20,7 +20,7 @@ class Media:
         self._data = data
 
     @property
-    def source(self):
+    def source(self) -> Path:
         return Path(self._data['src'])
 
     @property
@@ -67,6 +67,9 @@ class MediaBin:
     def __init__(self, media_bin_data, root_path):
         self._data = media_bin_data
         self._root_path = root_path
+
+    def __len__(self):
+        return len(self._data)
 
     def __iter__(self) -> Iterable[Media]: 
         """Get iterator of Media instances in this bin.

@@ -1,12 +1,57 @@
 import datetime as dt
 from pathlib import Path
 
-
-def test_number_of_media(simple_video):
-    assert len(list(simple_video.media_bin)) == 2
+from camtasia.media_bin import MediaType
 
 
-def test_media_contents(simple_video):
+class TestMediaBin:
+    def test_media_bin_is_initially_empty(self, project):
+        assert len(project.media_bin) == 0
+
+    def test_adding_media_increased_size(self, project, media_root):
+        project.media_bin.import_media(media_root / "llama.jpg")
+        assert len(project.media_bin) == 1
+
+    def test_iteration_over_media(self, project, media_root):
+        media_path = media_root / "llama.jpg"
+        project.media_bin.import_media(media_path)
+        media = list(project.media_bin)
+        assert len(media) == 1
+
+    def test_get_media_by_id(self, project, media_root):
+        media_path = media_root / "llama.jpg"
+        imported_media = project.media_bin.import_media(media_path)
+        fetched_media = project.media_bin[imported_media.id]
+        assert fetched_media.id == imported_media.id
+
+    def test_delete_media_removes_media(self, project, media_root):
+        media_path = media_root / "llama.jpg"
+        media = project.media_bin.import_media(media_path)
+        del project.media_bin[media.id]
+        assert len(project.media_bin) == 0
+
+
+class TestMedia:
+    def test_source_looks_correct(self, project, media_root: Path):
+        media_path = media_root / "llama.jpg"
+        media = project.media_bin.import_media(media_path)
+        assert media_path.name == media.source.name
+
+    def test_identity(self, project, media_root: Path):
+        media_path = media_root / "llama.jpg"
+        media = project.media_bin.import_media(media_path)
+        assert media.identity == 'llama'
+
+    def test_typ(self, project, media_root: Path):
+        media_path = media_root / "llama.jpg"
+        media = project.media_bin.import_media(media_path)
+        assert media.type == MediaType.Image
+
+    # TODO: rect, range, last_modification
+
+
+
+def test_canned_media_test(simple_video):
     media = list(simple_video.media_bin)
 
     assert media[0].source == Path(
