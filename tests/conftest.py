@@ -9,7 +9,7 @@ from camtasia.project import load_project
 def simple_video_path():
     "Path to simple_video.cmproj."
     root = pathlib.Path(str(pytest.config.rootdir))
-    return root / 'tests' / 'examples' / 'simple-video.cmproj'
+    return root / 'tests' / 'resources' / 'simple-video.cmproj'
 
 
 @pytest.fixture(scope='session')
