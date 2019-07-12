@@ -27,8 +27,6 @@ class Timeline:
         for frame in self._data.get('parameters', {}).get('toc', {}).get('keyframes', ()):
             yield Marker(name=frame['value'], time=frame['time'])
 
-    # TODO: Support for editing markers
-
 
 class _Tracks:
     """Container for Tracks.

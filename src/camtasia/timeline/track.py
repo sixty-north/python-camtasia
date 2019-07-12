@@ -87,8 +87,6 @@ class _Medias:
             raise ValueError(
                 'Unsupported media type: {}'.format(bin_media.type))
 
-        # TODO: Check that it doesn't overlap something else on the timeline.
-
         self._data['medias'].append(record)
         return self[record['id']]
 
