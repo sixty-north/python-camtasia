@@ -1,3 +1,7 @@
+from pathlib import Path
+from camtasia.project import Project
+
+
 class TestTrack:
     def test_track_name(self, project):
         project.timeline.tracks.insert_track(2, 'test-track')
@@ -25,3 +29,34 @@ class TestTrack:
         assert len(track.medias) == 0
 
 
+class TestTrackMedia:
+    def test_initially_has_no_markers(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        media = track.medias.add_media(bin_media, 0)
+        assert len(list(media.markers)) == 0
+
+    def test_adding_media_increases_length(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        track.medias.add_media(bin_media, 0)
+        assert len(track.medias) == 1
+
+    def test_iteration(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        track.medias.add_media(bin_media, 0)
+        media = list(track.medias)
+        assert len(media) == 1
+
+    def test_get_media_by_id(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        media_id = track.medias.add_media(bin_media, 0).id
+        media = track.medias[media_id]
+        assert media.id == media_id
+        assert media.source == bin_media.id

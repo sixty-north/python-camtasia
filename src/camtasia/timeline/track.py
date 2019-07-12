@@ -90,6 +90,7 @@ class _Medias:
         # TODO: Check that it doesn't overlap something else on the timeline.
 
         self._data['medias'].append(record)
+        return self[record['id']]
 
     def _next_media_id(self):
         max_media_id = max((media.id
