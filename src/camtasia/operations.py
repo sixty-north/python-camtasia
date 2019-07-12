@@ -6,15 +6,16 @@ and are thus more complicated. This module provides some of these more complex o
 """
 
 
-def add_media_to_track(proj, track_index, media_id, start):
+def add_media_to_track(proj, track_index, media_id, start, duration=None):
     """Add a track reference to media-bin media.
 
     Raises:
         KeyError: Specified track or media can't be found.
+        ValueError: Media overlaps existing track media.
     """
     track = proj.timeline.tracks[track_index]
     media = proj.media_bin[media_id]
-    track.add_media(media, start)
+    track.add_media(media, start, duration)
 
 
 def remove_media(project, media_id, clear_tracks=False):
