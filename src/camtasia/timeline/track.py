@@ -87,6 +87,11 @@ class _Medias:
             raise ValueError(
                 'Unsupported media type: {}'.format(bin_media.type))
 
+        new_media = TrackMedia(record)
+
+        if any(_overlaps(new_media, m) for m in self):
+            raise ValueError(f'Track media overlaps existing media: {new_media}')
+
         self._data['medias'].append(record)
         return self[record['id']]
 
@@ -186,3 +191,13 @@ class _Medias:
 
             }
         }
+
+
+def _overlaps(media_a, media_b):
+    "Determines if two TrackMedia overlap."
+    a1 = media_a.start
+    a2 = media_a.start + media_a.duration - 1
+    b1 = media_b.start
+    b2 = media_b.start + media_b.duration - 1
+    return a1 <= b2 and b1 <= a2
+

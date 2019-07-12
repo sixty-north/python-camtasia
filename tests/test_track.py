@@ -1,4 +1,7 @@
 from pathlib import Path
+
+import pytest
+
 from camtasia.project import Project
 
 
@@ -60,3 +63,27 @@ class TestTrackMedia:
         media = track.medias[media_id]
         assert media.id == media_id
         assert media.source == bin_media.id
+
+    def test_add_overlapping_media_raises_ValueError(self, project: Project, media_root: Path):
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+
+        # Add image at start of track
+        track.medias.add_media(
+            project.media_bin.import_media(media_root / 'llama.jpg'), 0)
+
+        # Add another image at the same place
+        with pytest.raises(ValueError):
+            track.medias.add_media(
+                project.media_bin.import_media(media_root / 'monkey.jpg'), 0)
+
+    def test_add_non_overlapping_media(self, project: Project, media_root: Path):
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+
+        # Add image at start of track
+        media1 = track.medias.add_media(
+            project.media_bin.import_media(media_root / 'llama.jpg'), 0)
+
+        # Add another image at the same place
+        track.medias.add_media(
+            project.media_bin.import_media(media_root / 'monkey.jpg'), media1.start + media1.duration)
+
