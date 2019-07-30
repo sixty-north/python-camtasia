@@ -115,12 +115,12 @@ class _Medias:
             "parameters": {
                 "scale0": {
                     "type": "double",
-                            "defaultValue": 0.25,
+                            "defaultValue": 1.0,
                             "interp": "eioe"
                 },
                 "scale1": {
                     "type": "double",
-                            "defaultValue": 0.25,
+                            "defaultValue": 1.0,
                             "interp": "eioe"
                 },
                 "cursorScale": {
@@ -144,7 +144,7 @@ class _Medias:
             "scalar": 1,
             "metadata": {
                 "clipSpeedAttribute": False,
-                "default-scale": "0.25",
+                "default-scale": "1.0",
                 "effectApplied": "none"
             },
             "animationTracks": {
