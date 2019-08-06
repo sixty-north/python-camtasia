@@ -95,13 +95,19 @@ class _Medias:
 
         return self._insert_media(record)
 
-    def add_annotation(self, annotation, start, duration=None):
+    def add_annotation(self, annotation, start, duration=None, translation=(0, 0)):
         """Adds a new annotation to the track.
+
+        Args:
+            annotation: The annotation record dict, as produced by functions in the `annotations` package.
+            start: The frame at which the annotation should start.
+            duration: The duration in frames of the annotation.
+            translation: A `(x-translation, y-translation)` tuple describing how to translate the annotation.
 
         Raises:
             ValueError: The annotation can't be inserted because it overlaps existing media on the track.
         """
-        record = self._annotation_record(annotation, start, duration)
+        record = self._annotation_record(annotation, start, duration, translation)
         return self._insert_media(record)
 
     def _insert_media(self, record):
@@ -122,7 +128,7 @@ class _Medias:
 
         return max_media_id + 1
 
-    def _annotation_record(self, annotation, start, duration):
+    def _annotation_record(self, annotation, start, duration, translation):
         duration = 150 if duration is None else duration
 
         return {
@@ -148,6 +154,10 @@ class _Medias:
             },
             "animationTracks": {
 
+            },
+            "parameters": {
+                "translation0": translation[0],
+                "translation1": translation[1]
             }
         }
 
