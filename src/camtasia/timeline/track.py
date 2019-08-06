@@ -79,6 +79,12 @@ class _Medias:
         self._data['medias'] = [m for m in self if m.id != media_id]
 
     def add_media(self, bin_media, start, duration=None):
+        """Add media from the bin to the track.
+
+        Raises:
+            ValueError: The type of the bin media is unsupported.
+            ValueError: The media can't be inserted because it overlaps existing media on the track.
+        """
         if bin_media.type == MediaType.Image:
             record = self._image_record(bin_media, start, duration)
         elif bin_media.type == MediaType.Video:
@@ -87,10 +93,23 @@ class _Medias:
             raise ValueError(
                 'Unsupported media type: {}'.format(bin_media.type))
 
+        return self._insert_media(record)
+
+    def add_annotation(self, annotation, start, duration=None):
+        """Adds a new annotation to the track.
+
+        Raises:
+            ValueError: The annotation can't be inserted because it overlaps existing media on the track.
+        """
+        record = self._annotation_record(annotation, start, duration)
+        return self._insert_media(record)
+
+    def _insert_media(self, record):
         new_media = TrackMedia(record)
 
         if any(_overlaps(new_media, m) for m in self):
-            raise ValueError(f'Track media overlaps existing media: {new_media}')
+            raise ValueError(
+                f'Track media overlaps existing media: {new_media}')
 
         self._data['medias'].append(record)
         return self[record['id']]
@@ -102,6 +121,35 @@ class _Medias:
                            default=0)
 
         return max_media_id + 1
+
+    def _annotation_record(self, annotation, start, duration):
+        duration = 150 if duration is None else duration
+
+        return {
+            "id": self._next_media_id(),
+            "_type": "Callout",
+            "def": annotation,                
+            "attributes": {
+                "autoRotateText": True
+            },
+            "effects": [
+
+            ],
+            "start": start,
+            "duration": duration,
+            "mediaStart": 0,
+            "mediaDuration": duration,
+            "scalar": 1,
+            "metadata": {
+                "AppliedThemeId": "",
+                "clipSpeedAttribute": False,
+                "default-scale": "1",
+                "effectApplied": "none"
+            },
+            "animationTracks": {
+
+            }
+        }
 
     def _video_record(self, bin_media, start, duration):
         return {
@@ -200,4 +248,3 @@ def _overlaps(media_a, media_b):
     b1 = media_b.start
     b2 = media_b.start + media_b.duration - 1
     return a1 <= b2 and b1 <= a2
-

@@ -63,8 +63,11 @@ class TrackMedia:
     @property
     def source(self):
         """ID of the media-bin source for this media.
+
+        If media does not have a presence in the media-bin (e.g. if it's an annotation), this
+        will be None.
         """
-        return self._data['src']
+        return self._data.get('src', None)
 
     def __repr__(self):
         return f'Media(start={self.start}, duration={self.duration})'
