@@ -1,32 +1,7 @@
-"""Support for creating annotations that can be added to tracks.
+"""Callout annotations.
 """
-from dataclasses import dataclass
-from enum import Enum
 
-
-@dataclass(frozen=True)
-class Color:
-    red: float
-    green: float
-    blue: float
-
-    def __post_init__(self):
-        for comp in ('red', 'green', 'blue'):
-            if not 0.0 <= getattr(self, comp) <= 1.0:
-                raise ValueError(
-                    f'Color {comp} component must be in the range [0.0, 1.0].')
-
-
-class HorizontalAlignment(Enum):
-    Left = 'left'
-    Center = 'center'
-    Right = 'right'
-
-
-class VerticalAlignment(Enum):
-    Top = 'top'
-    Center = 'center'
-    Bottom = 'bottom'
+from .types import Color, HorizontalAlignment, VerticalAlignment
 
 
 def text(text,
