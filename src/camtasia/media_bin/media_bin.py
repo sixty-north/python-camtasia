@@ -37,8 +37,12 @@ class Media:
 
     @property
     def range(self):
-        """The start and stop frame of the media as a `(start, stop)` tuple.
+        """The start and stop times of the media as a `(start, stop)` tuple.
+
+        Each tuple element is an int-encoded time where the three least significant digits represent milliseconds and
+        everything else represents seconds.
         """
+        
         return tuple(self._data['sourceTracks'][0]['range'])
 
     @property

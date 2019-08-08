@@ -81,6 +81,11 @@ class _Medias:
     def add_media(self, bin_media, start, duration=None):
         """Add media from the bin to the track.
 
+        Args:
+            bin_media: The `media_bin.Media` to insert into the timeline.
+            start: The frame on the timeline at which the media starts.
+            duration: The duration in frames of the media on the timeline.
+
         Raises:
             ValueError: The type of the bin media is unsupported.
             ValueError: The media can't be inserted because it overlaps existing media on the track.
@@ -196,9 +201,9 @@ class _Medias:
 
             ],
             "start": start,
-            "duration": bin_media.range[1] if duration is None else duration,
-            "mediaStart": bin_media.range[0],
-            "mediaDuration": bin_media.range[1],
+            "duration": _int_encoded_time_to_frame(bin_media.range[1]) if duration is None else duration,
+            "mediaStart": _int_encoded_time_to_frame(bin_media.range[0]),
+            "mediaDuration": _int_encoded_time_to_frame(bin_media.range[1]),
             "scalar": 1,
             "metadata": {
                 "clipSpeedAttribute": False,
@@ -249,6 +254,11 @@ class _Medias:
 
             }
         }
+
+
+def _int_encoded_time_to_frame(i, frame_rate=30):
+    seconds, milliseconds = divmod(i, 1000)
+    return int((seconds + milliseconds / 1000) * frame_rate)
 
 
 def _overlaps(media_a, media_b):

@@ -48,16 +48,17 @@ class TrackMedia:
 
     @property
     def start(self):
-        "The offset on the timeline at which the visible media starts."
+        "The offset (in frames) on the timeline at which the visible media starts."
         return self._data['start']
 
     @property
     def media_start(self):
-        "The offset into the underlying media at which the visible media starts."
+        "The offset (in frames) into the underlying media at which the visible media starts."
         return self._data['mediaStart']
 
     @property
     def duration(self):
+        "The duration (in frames) of the media on the timeline."
         return self._data['duration']
 
     @property
