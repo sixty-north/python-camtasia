@@ -2,7 +2,7 @@ import datetime
 from enum import Enum
 from pathlib import Path
 import shutil
-from typing import Iterable
+from typing import Iterable, Tuple
 
 from pymediainfo import MediaInfo
 from xml.etree.ElementTree import ParseError
@@ -13,6 +13,37 @@ class MediaType(Enum):
     # TODO: Audio
     Video = 0
     Image = 1
+
+
+class IntEncodedTime:
+    """Times encoded as integers.
+
+    Media times are sometimes reported using a special encoding where the three least significant digits represent
+    milliseconds and everything else represents seconds. This class represents that encoding, and provides support for
+    converting to other useful domains (e.g. frames).
+
+    This is intentionally not interchangeable with other number types so that we don't accidentally compare it to e.g.
+    time represented in frames.
+    """
+    def __init__(self, encoded_time):
+        self._seconds, self._milliseconds = divmod(encoded_time, 1000) 
+
+    @property
+    def seconds(self):
+        return self._seconds
+
+    @property
+    def milliseconds(self):
+        return self._milliseconds
+
+    def to_frame(self, frame_rate=30):
+        return int((self.seconds + self.milliseconds / 1000) * frame_rate)
+
+    def __str__(self):
+        return f'{self.seconds}s{self.milliseconds}ms'
+
+    def __repr__(self):
+        return f'IntEncodedTime(encoded_time={self.seconds + self.milliseconds * 1000})'
 
 
 class Media:
@@ -36,14 +67,16 @@ class Media:
         return tuple(self._data['rect'])
 
     @property
-    def range(self):
+    def range(self) -> Tuple[IntEncodedTime, IntEncodedTime]:
         """The start and stop times of the media as a `(start, stop)` tuple.
 
         Each tuple element is an int-encoded time where the three least significant digits represent milliseconds and
         everything else represents seconds.
+
+        Returns: A two-tuple of `IntEncodedTime`s.
         """
         
-        return tuple(self._data['sourceTracks'][0]['range'])
+        return tuple(map(IntEncodedTime, self._data['sourceTracks'][0]['range']))
 
     @property
     def last_modification(self):

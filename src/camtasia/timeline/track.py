@@ -112,7 +112,8 @@ class _Medias:
         Raises:
             ValueError: The annotation can't be inserted because it overlaps existing media on the track.
         """
-        record = self._annotation_record(annotation, start, duration, translation)
+        record = self._annotation_record(
+            annotation, start, duration, translation)
         return self._insert_media(record)
 
     def _insert_media(self, record):
@@ -139,7 +140,7 @@ class _Medias:
         return {
             "id": self._next_media_id(),
             "_type": "Callout",
-            "def": annotation,                
+            "def": annotation,
             "attributes": {
                 "autoRotateText": True
             },
@@ -167,6 +168,11 @@ class _Medias:
         }
 
     def _video_record(self, bin_media, start, duration):
+        duration = bin_media.range[1].to_frame() if duration is None else duration
+
+        if duration > bin_media.range[1].to_frame():
+            return self._stiched_video_record(bin_media, start, duration)
+
         return {
             "id": self._next_media_id(),
             "_type": "ScreenVMFile",
@@ -201,9 +207,9 @@ class _Medias:
 
             ],
             "start": start,
-            "duration": _int_encoded_time_to_frame(bin_media.range[1]) if duration is None else duration,
-            "mediaStart": _int_encoded_time_to_frame(bin_media.range[0]),
-            "mediaDuration": _int_encoded_time_to_frame(bin_media.range[1]),
+            "duration": duration,
+            "mediaStart": bin_media.range[0].to_frame(),
+            "mediaDuration": duration,
             "scalar": 1,
             "metadata": {
                 "clipSpeedAttribute": False,
@@ -242,8 +248,8 @@ class _Medias:
             ],
             "start": start,
             "duration": 150 if duration is None else duration,
-            "mediaStart": bin_media.range[0],
-            "mediaDuration": bin_media.range[1],
+            "mediaStart": bin_media.range[0].to_frame(),
+            "mediaDuration": bin_media.range[1].to_frame(),
             "scalar": 1,
             "metadata": {
                 "clipSpeedAttribute": False,
@@ -255,10 +261,89 @@ class _Medias:
             }
         }
 
+    def _stiched_video_record(self, bin_media, start, duration):
+        "Video which is extended past its end with still."
 
-def _int_encoded_time_to_frame(i, frame_rate=30):
-    seconds, milliseconds = divmod(i, 1000)
-    return int((seconds + milliseconds / 1000) * frame_rate)
+        assert duration > bin_media.range[1].to_frame(), "Stitching/extending video unnecessarily."
+
+        return {
+            "id": self._next_media_id(),
+            "_type": "StitchedMedia",
+            "minMediaStart": 0,
+            "attributes": {
+                "ident": bin_media.identity,
+                "gain": 1.0,
+                "mixToMono": False
+            },
+            "parameters": {
+                "cursorOpacity": 1.0,
+                "cursorScale": 1.0
+            },
+            "medias": [
+                {
+                    "id": self._next_media_id(),
+                    "_type": "VMFile",
+                    "src": bin_media.id,
+                    "trackNumber": 0,  # TODO: What is this?
+                    "attributes": {
+                        "ident": "sample"
+                    },
+                    "effects": [
+
+                    ],
+                    "start": 0,
+                    "duration": bin_media.range[1].to_frame(),
+                    "mediaStart": 0,
+                    "mediaDuration": bin_media.range[1].to_frame(),
+                    "scalar": 1,
+                    "metadata": {
+                        "clipSpeedAttribute": False,
+                        "default-scale": "1.0",
+                        "effectApplied": "none"
+                    },
+                    "animationTracks": {
+
+                    }
+                },
+                {
+                    "id": self._next_media_id(),
+                    "_type": "IMFile",
+                    "src": bin_media.id,
+                    "trackNumber": 0,
+                    "trimStartSum": 0,
+                    "attributes": {
+                        "ident": "Frame of {}".format(bin_media.identity)
+                    },
+                    "effects": [
+
+                    ],
+                    "start": bin_media.range[1].to_frame() - 1,
+                    "duration": 108001,  # This appears to be a magic constant of some sort.
+                    "mediaStart": bin_media.range[1].to_frame() - 2,
+                    "mediaDuration": 1,
+                    "scalar": 1,
+                    "animationTracks": {
+
+                    }
+                }
+            ],
+            "effects": [
+
+            ],
+            "start": start,
+            "duration": duration,
+            "mediaStart": 0,
+            "mediaDuration": duration,
+            "scalar": 1,
+            "metadata": {
+                "clipSpeedAttribute": False,
+                "default-scale": "1.0",
+                "effectApplied": "none"
+            },
+            "animationTracks": {
+
+            }
+        }
 
 
 def _overlaps(media_a, media_b):
