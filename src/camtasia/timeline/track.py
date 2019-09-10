@@ -286,7 +286,7 @@ class _Medias:
                     "src": bin_media.id,
                     "trackNumber": 0,  # TODO: What is this?
                     "attributes": {
-                        "ident": "sample"
+                        "ident": bin_media.identity,
                     },
                     "effects": [
 
@@ -317,8 +317,14 @@ class _Medias:
                     "effects": [
 
                     ],
-                    "start": bin_media.range[1].to_frame() - 1,
+                    "start": bin_media.range[1].to_frame(),
                     "duration": 108001,  # This appears to be a magic constant of some sort.
+
+                    # TODO: This minus two seems like it should be minus 1...we want to extend the last frame (as I
+                    # understand things). However, sometimes pymediainfo calculates one frame more than camtasia; when
+                    # this happens, camtasia uses a black frame rather than the actual last frame. I don't know why we
+                    # get a different answer from camtasia, but I think camtasia is just wrong. I don't know the pattern
+                    # of its wrongness yet, though. For now, this seems to work.
                     "mediaStart": bin_media.range[1].to_frame() - 2,
                     "mediaDuration": 1,
                     "scalar": 1,
