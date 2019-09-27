@@ -6,15 +6,15 @@ from camtasia.project import load_project, new_project
 
 
 @pytest.fixture
-def media_root():
-    root = pathlib.Path(str(pytest.config.rootdir))
+def media_root(pytestconfig):
+    root = pathlib.Path(str(pytestconfig.rootdir))
     return root / 'tests' / 'resources' / 'media'
 
 
 @pytest.fixture(scope='session')
-def simple_video_path():
+def simple_video_path(pytestconfig):
     "Path to simple_video.cmproj."
-    root = pathlib.Path(str(pytest.config.rootdir))
+    root = pathlib.Path(str(pytestconfig.rootdir))
     return root / 'tests' / 'resources' / 'simple-video.cmproj'
 
 
