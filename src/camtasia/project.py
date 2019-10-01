@@ -18,11 +18,12 @@ class Project:
 
     Args:
         file_path: Path to the Camtasia project (i.e. a cmproj directory). May be relative or absolute.
+        encoding: Encoding of the project file.
     """
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, encoding=None):
         self._file_path = file_path
-        self._data = json.loads(self._project_file.read_text())
+        self._data = json.loads(self._project_file.read_text(encoding=encoding))
 
     @property
     def file_path(self) -> Path:
@@ -60,20 +61,21 @@ class Project:
         return f'Project(file_path="{self.file_path}")'
 
 
-def load_project(file_path):
+def load_project(file_path, encoding=None):
     """Load a Camtasia project at the specific path.
 
     Args:
         file_path: The path (pathlib.Path or str) to the Camtasia project.
+        encoding: Encoding of the project file.
 
     Return: A new Project instance.
     """
     file_path = Path(file_path).resolve()
-    return Project(file_path)
+    return Project(file_path, encoding=encoding)
 
 
 @contextmanager
-def use_project(file_path, save_on_exit=True):
+def use_project(file_path, save_on_exit=True, encoding=None):
     """Context manager for working with Projects.
 
     This loads the project on enter. If the with-block exits normally and `save_on_exit` is true, then this saves the
@@ -82,10 +84,11 @@ def use_project(file_path, save_on_exit=True):
     Args: 
         file_path: The path (pathlib.Path or str) to the Camtasia project.
         save_on_exit: Whether to save the project on normal exit.
+        encoding: Encoding of the project file.
 
     Yields: A new Project instance.
     """
-    proj = load_project(file_path)
+    proj = load_project(file_path, encoding=encoding)
 
     yield proj
 
