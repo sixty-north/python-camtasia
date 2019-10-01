@@ -22,7 +22,7 @@ class Project:
 
     def __init__(self, file_path):
         self._file_path = file_path
-        self._data = json.loads(self._project_file.read_text())
+        self._data = json.loads(self._project_file.read_text(encoding='utf-8'))
 
     @property
     def file_path(self) -> Path:
