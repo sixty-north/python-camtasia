@@ -24,6 +24,7 @@ class Project:
     def __init__(self, file_path, encoding=None):
         self._file_path = file_path
         self._data = json.loads(self._project_file.read_text(encoding=encoding))
+        self._encoding = encoding
 
     @property
     def file_path(self) -> Path:
@@ -31,7 +32,7 @@ class Project:
         return self._file_path
 
     def save(self):
-        with self._project_file.open(mode='wt') as handle:
+        with self._project_file.open(mode='wt', encoding=self._encoding) as handle:
             json.dump(self._data, handle)
 
     @property
