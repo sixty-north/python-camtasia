@@ -40,5 +40,5 @@ setup(
            'pytsc = camtasia.cli:main',
         ],
     },
-    long_description=long_description,
+    long_description=Path('README.rst').read_text(),
 )
