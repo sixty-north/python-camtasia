@@ -26,6 +26,8 @@ setup(
         'exit-codes >=1.3.0, < 2.0.0',
         'docopt-subcommands',
         'pymediainfo',
+        'marshmallow',
+        'marshmallow-oneofschema',
     ],
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax, for
