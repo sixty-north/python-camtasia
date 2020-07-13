@@ -1,3 +1,6 @@
+from collections import ChainMap
+
+from camtasia.effects import EffectSchema
 from .track_media import TrackMedia
 from camtasia.media_bin import MediaType
 
@@ -78,22 +81,23 @@ class _Medias:
 
         self._data['medias'] = [m for m in self if m.id != media_id]
 
-    def add_media(self, bin_media, start, duration=None):
+    def add_media(self, bin_media, start, duration=None, *, effects=None):
         """Add media from the bin to the track.
 
         Args:
             bin_media: The `media_bin.Media` to insert into the timeline.
             start: The frame on the timeline at which the media starts.
             duration: The duration in frames of the media on the timeline.
+            effects: An optional sequence of Effect objects.
 
         Raises:
             ValueError: The type of the bin media is unsupported.
             ValueError: The media can't be inserted because it overlaps existing media on the track.
         """
         if bin_media.type == MediaType.Image:
-            record = self._image_record(bin_media, start, duration)
+            record = self._image_record(bin_media, start, duration, effects)
         elif bin_media.type == MediaType.Video:
-            record = self._video_record(bin_media, start, duration)
+            record = self._video_record(bin_media, start, duration, effects)
         else:
             raise ValueError(
                 'Unsupported media type: {}'.format(bin_media.type))
@@ -167,11 +171,16 @@ class _Medias:
             }
         }
 
-    def _video_record(self, bin_media, start, duration):
+    def _video_record(self, bin_media, start, duration, effects):
         duration = bin_media.range[1].to_frame() if duration is None else duration
 
         if duration > bin_media.range[1].to_frame():
             return self._stiched_video_record(bin_media, start, duration)
+
+        if effects is None:
+            effects = []
+
+        effect_schema = EffectSchema()
 
         return {
             "id": self._next_media_id(),
@@ -204,24 +213,32 @@ class _Medias:
                 }
             },
             "effects": [
-
+                effect_schema.dump(effect) for effect in effects
             ],
             "start": start,
             "duration": duration,
             "mediaStart": bin_media.range[0].to_frame(),
             "mediaDuration": duration,
             "scalar": 1,
-            "metadata": {
-                "clipSpeedAttribute": False,
-                "default-scale": "1.0",
-                "effectApplied": "none"
-            },
+            "metadata": dict(ChainMap(
+                {
+                    "clipSpeedAttribute": False,
+                    "default-scale": "1.0",
+                    "effectApplied": "none" if len(effects) == 0 else effects[-1].name,
+                },
+                *(effect.metadata for effect in effects)
+            )),
             "animationTracks": {
 
             }
         }
 
-    def _image_record(self, bin_media, start, duration):
+    def _image_record(self, bin_media, start, duration, effects=None):
+        if effects is None:
+            effects = []
+
+        effect_schema = EffectSchema()
+
         return {
             "id": self._next_media_id(),
             "_type": "IMFile",
@@ -244,18 +261,21 @@ class _Medias:
                 }
             },
             "effects": [
-
+                effect_schema.dump(effect) for effect in effects
             ],
             "start": start,
             "duration": 150 if duration is None else duration,
             "mediaStart": bin_media.range[0].to_frame(),
             "mediaDuration": bin_media.range[1].to_frame(),
             "scalar": 1,
-            "metadata": {
-                "clipSpeedAttribute": False,
-                "default-scale": "1.0",
-                "effectApplied": "none"
-            },
+            "metadata": dict(ChainMap(
+                {
+                    "clipSpeedAttribute": False,
+                    "default-scale": "1.0",
+                    "effectApplied": "none" if len(effects) == 0 else effects[-1].name,
+                },
+                *(effect.metadata for effect in effects)
+            )),
             "animationTracks": {
 
             }

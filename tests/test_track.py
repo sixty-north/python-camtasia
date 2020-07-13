@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from camtasia.effects import ChromaKeyEffect, RGBA
 from camtasia.project import Project
 
 
@@ -87,3 +88,62 @@ class TestTrackMedia:
         track.medias.add_media(
             project.media_bin.import_media(media_root / 'monkey.jpg'), media1.start + media1.duration)
 
+    def test_add_media_with_default_chromakey_effect(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        media_id = track.medias.add_media(bin_media, 0, effects=[
+            ChromaKeyEffect()
+        ]).id
+        media = track.medias[media_id]
+        assert media.id == media_id
+        assert media.source == bin_media.id
+
+    def test_get_track_media_effects(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        effect = ChromaKeyEffect()
+        media_id = track.medias.add_media(bin_media, 0, effects=[
+            effect
+        ]).id
+        media = track.medias[media_id]
+        assert media.effects[0] == effect
+
+    def test_remove_track_media_effect(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        effect = ChromaKeyEffect()
+        media_id = track.medias.add_media(bin_media, 0, effects=[
+            effect
+        ]).id
+        media = track.medias[media_id]
+        del media.effects[0]
+        assert len(media.effects) == 0
+
+    def test_replace_track_media_effect(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        effect = ChromaKeyEffect()
+        media_id = track.medias.add_media(bin_media, 0, effects=[
+            effect
+        ]).id
+        media = track.medias[media_id]
+        new_effect = ChromaKeyEffect(hue=RGBA(128, 0, 0, 255))
+        media.effects[0] = new_effect
+        assert len(media.effects) == 1
+        assert media.effects[0] == new_effect
+
+    def test_add_effect(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        effect = ChromaKeyEffect()
+        media_id = track.medias.add_media(bin_media, 0).id
+        media = track.medias[media_id]
+        new_effect = ChromaKeyEffect(hue=RGBA(128, 0, 0, 255))
+        media.effects.add_effect(new_effect)
+        assert len(media.effects) == 1
+        assert media.effects[0] == new_effect
