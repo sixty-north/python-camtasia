@@ -3,6 +3,8 @@ from numbers import Real
 from marshmallow import Schema, fields, post_load
 from marshmallow_oneofschema import OneOfSchema
 
+from camtasia.color import RGBA
+
 COLOR_KEY = "color"
 
 COMPENSATION_KEY = "clrCompensation"
@@ -18,85 +20,21 @@ CHROMA_KEY_NAME = "ChromaKey"
 VISUAL_EFFECTS_CATEGORY = "categoryVisualEffects"
 
 
-class RGBA:
 
-    MINIMUM_CHANNEL = 0
-    MAXIMUM_CHANNEL = 255
 
-    @classmethod
-    def from_floats(cls, red, green, blue, alpha):
-        return cls(
-            red * cls.MAXIMUM_CHANNEL,
-            green * cls.MAXIMUM_CHANNEL,
-            blue * cls.MAXIMUM_CHANNEL,
-            alpha * cls.MAXIMUM_CHANNEL,
-        )
 
-    def __init__(self, red, green, blue, alpha):
-        if not (self.MINIMUM_CHANNEL <= red <= self.MAXIMUM_CHANNEL):
-            raise ValueError(
-                f"RGBA red channel {red} out of range {self.MINIMUM_CHANNEL} "
-                f"to {self.MAXIMUM_CHANNEL}"
-            )
+def rgba(argument):
+    channels = hex_rgb(argument)
+    if len(channels) == 3:
+        return (*channels, 255)
+    return channels
 
-        if not (self.MINIMUM_CHANNEL <= green <= self.MAXIMUM_CHANNEL):
-            raise ValueError(
-                f"RGBA green channel {green} out of range {self.MINIMUM_CHANNEL} "
-                f"to {self.MAXIMUM_CHANNEL}"
-            )
 
-        if not (self.MINIMUM_CHANNEL <= blue <= self.MAXIMUM_CHANNEL):
-            raise ValueError(
-                f"RGBA blue channel {blue} out of range {self.MINIMUM_CHANNEL} "
-                f"to {self.MAXIMUM_CHANNEL}"
-            )
-
-        if not (self.MINIMUM_CHANNEL <= alpha <= self.MAXIMUM_CHANNEL):
-            raise ValueError(
-                f"RGBA alpha channel {alpha} out of range {self.MINIMUM_CHANNEL} "
-                f"to {self.MAXIMUM_CHANNEL}"
-            )
-
-        self._red = red
-        self._green = green
-        self._blue = blue
-        self._alpha = alpha
-
-    @property
-    def red(self):
-        return self._red
-
-    @property
-    def green(self):
-        return self._green
-
-    @property
-    def blue(self):
-        return self._blue
-
-    @property
-    def alpha(self):
-        return self._alpha
-
-    def as_tuple(self):
-        return (self.red, self.green, self.blue, self.alpha)
-
-    def _key(self):
-        return self.as_tuple()
-
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return NotImplemented
-        return self._key() == other._key()
-
-    def __hash__(self):
-        return hash(self._key())
-
-    def __repr__(self):
-        return (
-            f"{type(self).__name__}(red={self.red}, green={self.green}, "
-            f"blue={self.blue}, alpha={self.alpha})"
-        )
+def rgb(argument):
+    channels = hex_rgb(argument)
+    if channels[3] != 255:
+        raise ValueError("Alpha argument not 0xFF for RGB color")
+    return channels[:3]
 
 
 class Effect:
@@ -189,6 +127,8 @@ class ChromaKeyEffect(VisualEffect):
 
         if hue is None:
             hue = self.DEFAULT_COLOR
+        elif isinstance(hue, str):
+            hue = RGBA.from_hex(hue)
 
         self._tolerance = tolerance
         self._softness = softness

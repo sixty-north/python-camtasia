@@ -1,6 +1,7 @@
 from pprint import pprint
 
-from camtasia.effects import ChromaKeyEffect, EffectSchema, RGBA
+from camtasia.effects import ChromaKeyEffect, EffectSchema
+from camtasia.color import RGBA
 
 
 def test_create_default_chromakey_effect():
@@ -12,13 +13,26 @@ def test_default_chromakey_effect_parameters():
     assert effect.tolerance == effect.parameters.tolerance
 
 
+def test_construct_chromakey_effect_with_rgba():
+    expected = RGBA(255, 127, 63, 31)
+    effect = ChromaKeyEffect(hue=expected)
+    assert effect.hue == expected
+
+
+def test_construct_chromakey_effect_with_hex():
+    color = "#FF7F3F1F"
+    expected = RGBA(255, 127, 63, 31)
+    effect = ChromaKeyEffect(hue=color)
+    assert effect.hue == expected
+
+
 def test_serialize_default_chromakey_effect_to_dictionary():
     effect = ChromaKeyEffect()
     schema = EffectSchema()
     actual = schema.dump(effect)
     pprint(actual)
     expected = {
-        'effectName': 'ChromaKeyEffect',
+        'effectName': 'ChromaKey',
         'category': 'categoryVisualEffects',
         'parameters': {
             'clrCompensation': 0.0,
@@ -53,7 +67,7 @@ def test_serialize_chromakey_effect_to_dictionary():
     actual = schema.dump(effect)
     pprint(actual)
     expected = {
-        'effectName': 'ChromaKeyEffect',
+        'effectName': 'ChromaKey',
         'category': 'categoryVisualEffects',
         'parameters': {
             'clrCompensation': 0.0,

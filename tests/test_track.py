@@ -2,7 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from camtasia.effects import ChromaKeyEffect, RGBA
+from camtasia.effects import ChromaKeyEffect
+from camtasia.color import RGBA
 from camtasia.project import Project
 
 
