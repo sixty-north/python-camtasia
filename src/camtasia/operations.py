@@ -6,8 +6,16 @@ and are thus more complicated. This module provides some of these more complex o
 """
 
 
-def add_media_to_track(proj, track_index, media_id, start, duration=None):
+def add_media_to_track(proj, track_index, media_id, start, duration=None, effects=None):
     """Add a track reference to media-bin media.
+
+    Args:
+        proj: The Camtasia project.
+        track_index: The index of the track to which to add media.
+        media_id: The id of the media to be added to the track.
+        start: The frame on the timeline at which the media starts.
+        duration: The duration in frames of the media on the timeline.
+        effects: An optional sequence of Effect objects.
 
     Raises:
         KeyError: Specified track or media can't be found.
@@ -15,12 +23,12 @@ def add_media_to_track(proj, track_index, media_id, start, duration=None):
     """
     track = proj.timeline.tracks[track_index]
     media = proj.media_bin[media_id]
-    track.add_media(media, start, duration)
+    track.add_media(media, start, duration, effects)
 
 
 def remove_media(project, media_id, clear_tracks=False):
     """Remove a piece of media from the media-bin.
-    
+
     By default, this will also remove references to the removed media from tracks.
 
     Args:
