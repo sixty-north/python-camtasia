@@ -90,9 +90,11 @@ class ChromaKeyEffect(VisualEffect):
 
     DEFAULT_COLOR = RGBA(0, 255, 0, 255)
 
-    DEFAULT_COMPENSATION = 0.0  # This doesn't seem to be represented in the UI
+    DEFAULT_COMPENSATION = 0.0  # Confusingly, this is called "hue" in the Camtasia GUI.
+    MINIMUM_COMPENSATION = 0.0
+    MAXIMUM_COMPENSATION = 1.0
 
-    def __init__(self, tolerance=None, softness=None, hue=None, defringe=None, inverted=None):
+    def __init__(self, tolerance=None, softness=None, hue=None, defringe=None, inverted=None, compensation=None):
         super().__init__(name=CHROMA_KEY_NAME)
 
         if tolerance is None:
@@ -122,6 +124,15 @@ class ChromaKeyEffect(VisualEffect):
                 f"to {self.MAXIMUM_DEFRINGE}"
             )
 
+        if compensation is None:
+            compensation = self.DEFAULT_COMPENSATION
+
+        if not (self.MINIMUM_COMPENSATION <= compensation <= self.MAXIMUM_COMPENSATION):
+            raise ValueError(
+                f"{self.name} compensation out of range {self.MINIMUM_COMPENSATION} "
+                f"to {self.MAXIMUM_COMPENSATION}"
+            )
+
         if inverted is None:
             inverted = self.DEFAULT_INVERTED
 
@@ -135,7 +146,7 @@ class ChromaKeyEffect(VisualEffect):
         self._defringe = defringe
         self._inverted = inverted
         self._hue = hue
-        self._compensation = self.DEFAULT_COMPENSATION
+        self._compensation = compensation
 
     @property
     def tolerance(self):
@@ -204,6 +215,7 @@ class ChromaKeyEffect(VisualEffect):
             INVERT_EFFECT_KEY: int(self.DEFAULT_INVERTED),
             SOFTNESS_KEY: self.DEFAULT_SOFTNESS,
             TOLERANCE_KEY: self.DEFAULT_TOLERANCE,
+            COMPENSATION_KEY: self.DEFAULT_COMPENSATION,
         }
 
     def _key(self):
@@ -222,7 +234,8 @@ class ChromaKeyEffect(VisualEffect):
     def __repr__(self):
         return (
             f"{type(self).__name__}(tolerance={self.tolerance}, softness={self.softness}, "
-            f"hue={self.hue}, defringe={self.defringe}, inverted={self.inverted})"
+            f"hue={self.hue}, defringe={self.defringe}, inverted={self.inverted}, "
+            f"compensation={self.compensation})"
         )
 
 
@@ -271,6 +284,7 @@ class ChromaKeyEffectSchema(Schema):
             ),
             defringe=parameters["defringe"],
             inverted=parameters["inverted"],
+            compensation=parameters["compensation"]
         )
 
 
