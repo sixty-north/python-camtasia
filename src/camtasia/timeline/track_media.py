@@ -28,8 +28,10 @@ class TrackMedia:
 
         start + (marker_time - media_start)
     """
+
     def __init__(self, media_data):
         self._data = media_data
+        self._markers = _Markers(self)
 
     @property
     def id(self):
@@ -38,14 +40,7 @@ class TrackMedia:
 
     @property
     def markers(self):
-        # Keyframes may not exist when e.g. the media has no markers
-        keyframes = self._data.get('parameters', {}).get('toc', {}).get('keyframes', ())
-
-        for m in keyframes:
-            marker_offset = m['time']
-
-            yield Marker(name=m['value'],
-                         time=self.start + (marker_offset - self.media_start))
+        return self._markers
 
     @property
     def start(self):
@@ -119,3 +114,58 @@ class TrackMediaEffects():
         effect_data = effect_schema.dump(effect)
         self._effects.append(effect_data)
         self._metadata.update(effect.metadata)
+
+
+class _Markers:
+    "Collection of markers in a TrackMedia."
+
+    def __init__(self, track_media: TrackMedia):
+        self._track_media = track_media
+
+    def __iter__(self):
+        "Iterate over Markers in a TrackMedia."
+        # Keyframes may not exist when e.g. the media has no markers
+        keyframes = self._track_media._data.get(
+            'parameters', {}).get('toc', {}).get('keyframes', ())
+
+        for m in keyframes:
+            marker_offset = m['time']
+
+            yield Marker(name=m['value'],
+                         time=self._track_media.start + (marker_offset - self._track_media.media_start))
+
+    def add(self, name, offset, duplicates_okay=False):
+        """Add a Marker to a TrackMedia.
+
+        Note that `offset` is interpreted as relative to the start of the timeline, not the
+        track media. This is symmetrical with how you interpret `Marker` objects in general. So if
+        you want to add a marker relative to the start of the `TrackMedia`, you need to add its
+        `start` value. For example, here's how to add a marker to the start of a `TrackMedia`:
+
+        >>> track = ...
+        >>> media = next(iter(track.medias))
+        >>> media.markers.add('marker-name', media.start)
+
+        Args:
+            name: The name of the marker.
+            offset: The offset of the marker (relative to the start of the timeline).
+
+        Returns: The new Marker object.
+
+        Raises:
+            ValueError: If a marker at `offset` already exists.
+        """
+
+        if any(m.time == offset for m in self):
+            raise ValueError(f'A marker already exists at offset {offset}')
+
+        marker_offset = offset + self._track_media.media_start - self._track_media.start
+
+        keyframes = self._track_media._data.setdefault(
+            'parameters', {}).setdefault('toc', {}).setdefault('keyframes', [])
+        keyframes.append(
+            {'value': name,
+             'time': marker_offset,
+             'endTime': marker_offset,
+             'duration': 0
+             })

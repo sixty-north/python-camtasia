@@ -35,13 +35,6 @@ class TestTrack:
 
 
 class TestTrackMedia:
-    def test_initially_has_no_markers(self, project: Project, media_root: Path):
-        media_path = media_root / 'llama.jpg'
-        bin_media = project.media_bin.import_media(media_path)
-        track = project.timeline.tracks.insert_track(2, 'test-track')
-        media = track.medias.add_media(bin_media, 0)
-        assert len(list(media.markers)) == 0
-
     def test_adding_media_increases_length(self, project: Project, media_root: Path):
         media_path = media_root / 'llama.jpg'
         bin_media = project.media_bin.import_media(media_path)
@@ -148,3 +141,32 @@ class TestTrackMedia:
         media.effects.add_effect(new_effect)
         assert len(media.effects) == 1
         assert media.effects[0] == new_effect
+
+
+class TestTrackMediaMarkers:
+    def test_initially_has_no_markers(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        media = track.medias.add_media(bin_media, 0)
+        assert len(list(media.markers)) == 0
+
+    def test_adding_marker_increases_marker_count(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        media = track.medias.add_media(bin_media, 0)
+        media.markers.add('marker-name', media.start)
+        assert len(list(media.markers)) == 1
+
+    def test_added_markers_appear_in_iteration(self, project: Project, media_root: Path):
+        media_path = media_root / 'llama.jpg'
+        bin_media = project.media_bin.import_media(media_path)
+        track = project.timeline.tracks.insert_track(2, 'test-track')
+        media = track.medias.add_media(bin_media, 0)
+        media.markers.add('marker-name', media.start)
+
+        markers = list(media.markers)
+        assert len(markers) == 1
+        assert markers[0].name == 'marker-name'
+        assert markers[0].time == media.start
