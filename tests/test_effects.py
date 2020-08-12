@@ -102,6 +102,7 @@ def test_default_chromakey_effect_metadata():
         "default-ChromaKey-invertEffect" : "0",
         "default-ChromaKey-softness" : "0.1",
         "default-ChromaKey-tolerance" : "0.1",
+        "default-ChromaKey-clrCompensation": "0",
     }
     assert actual == expected
 
