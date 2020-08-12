@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='camtasia',
-    version="6.2.0",
+    version="6.3.0",
     packages=find_packages('src'),
 
     author='Sixty North AS',
