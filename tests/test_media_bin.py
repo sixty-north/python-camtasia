@@ -1,54 +1,64 @@
 import datetime as dt
 from pathlib import Path
+import pytest
 
 from camtasia.media_bin import MediaType
+
+
+@pytest.fixture(params=['example.wav', 'llama.jpg', 'sample.mov'])
+def media_path(request, media_root):
+    return media_root / request.param
 
 
 class TestMediaBin:
     def test_media_bin_is_initially_empty(self, project):
         assert len(project.media_bin) == 0
 
-    def test_adding_media_increased_size(self, project, media_root):
-        project.media_bin.import_media(media_root / "llama.jpg")
+    def test_adding_media_increased_size(self, project, media_path):
+        project.media_bin.import_media(media_path)
         assert len(project.media_bin) == 1
 
-    def test_iteration_over_media(self, project, media_root):
-        media_path = media_root / "llama.jpg"
+    def test_iteration_over_media(self, project, media_path):
         project.media_bin.import_media(media_path)
         media = list(project.media_bin)
         assert len(media) == 1
 
-    def test_get_media_by_id(self, project, media_root):
-        media_path = media_root / "llama.jpg"
+    def test_get_media_by_id(self, project, media_path):
         imported_media = project.media_bin.import_media(media_path)
         fetched_media = project.media_bin[imported_media.id]
         assert fetched_media.id == imported_media.id
 
-    def test_delete_media_removes_media(self, project, media_root):
-        media_path = media_root / "llama.jpg"
+    def test_delete_media_removes_media(self, project, media_path):
         media = project.media_bin.import_media(media_path)
         del project.media_bin[media.id]
         assert len(project.media_bin) == 0
 
 
 class TestMedia:
-    def test_source_looks_correct(self, project, media_root: Path):
-        media_path = media_root / "llama.jpg"
+    def test_source_looks_correct(self, project, media_path):
         media = project.media_bin.import_media(media_path)
         assert media_path.name == media.source.name
 
-    def test_identity(self, project, media_root: Path):
-        media_path = media_root / "llama.jpg"
+    def test_identity(self, project, media_path: Path):
         media = project.media_bin.import_media(media_path)
-        assert media.identity == 'llama'
+        assert media.identity == media_path.stem  # NB: I only assume this is expected!
 
-    def test_typ(self, project, media_root: Path):
+    def test_type_for_image(self, project, media_root: Path):
         media_path = media_root / "llama.jpg"
         media = project.media_bin.import_media(media_path)
         assert media.type == MediaType.Image
 
-    # TODO: rect, range, last_modification
+    def test_type_for_video(self, project, media_root: Path):
+        media_path = media_root / "sample.mov"
+        media = project.media_bin.import_media(media_path)
+        assert media.type == MediaType.Video
 
+    def test_type_for_audio(self, project, media_root: Path):
+        media_path = media_root / "example.wav"
+        media = project.media_bin.import_media(media_path)
+        assert media.type == MediaType.Audio
+
+    # TODO: rect, range, last_modification
 
 
 def test_canned_media_test(simple_video):
