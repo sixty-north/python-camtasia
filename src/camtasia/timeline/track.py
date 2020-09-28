@@ -98,6 +98,8 @@ class _Medias:
             record = self._image_record(bin_media, start, duration, effects)
         elif bin_media.type == MediaType.Video:
             record = self._video_record(bin_media, start, duration, effects)
+        elif bin_media.type == MediaType.Audio:
+            record = self._audio_record(bin_media, start, duration, effects)  # TODO: Probably need to add _audio_record() method
         else:
             raise ValueError(
                 'Unsupported media type: {}'.format(bin_media.type))
@@ -278,6 +280,47 @@ class _Medias:
             )),
             "animationTracks": {
 
+            }
+        }
+
+    def _audio_record(self, bin_media, start, duration, effects):
+        duration = bin_media.range[1].to_frame() if duration is None else duration
+
+        if duration > bin_media.range[1].to_frame():
+            return self._stiched_video_record(bin_media, start, duration)
+
+        if effects is None:
+            effects = []
+
+        effect_schema = EffectSchema()
+
+        return {
+            "id": self._next_media_id(),
+            "_type": "AMFile",
+            "src": bin_media.id,
+            "trackNumber": 0,  # TODO: Is this correct? What is this?
+            "attributes": {
+                "ident": bin_media.identity,
+                "gain": 1.0,
+                "mixToMono": False,
+                "channelNumber": "0,1"
+
+            },
+             "effects": [
+            ],
+            "start": start,
+            "duration": duration,
+            "mediaStart": bin_media.range[0].to_frame(),
+            "mediaDuration": duration,
+            "scalar": 1,
+            "metadata": dict(ChainMap(
+                {
+                    "clipSpeedAttribute": False,
+                    "effectApplied": "none" if len(effects) == 0 else effects[-1].name,
+                },
+                *(effect.metadata for effect in effects)
+            )),
+            "animationTracks": {
             }
         }
 
