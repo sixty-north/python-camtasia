@@ -253,8 +253,6 @@ def _audio_track_to_json(track, media_id, source_file, timestamp):
 
 def _get_media_type(track):
     "Maps a `pymediainfo.Track.kind_of_stream` to a `MediaType`."
-    if track['format'] == 'PNG':
-        track['kind_of_stream'] = 'Image'
     return {
         'Image': MediaType.Image,
         'Video': MediaType.Video,
