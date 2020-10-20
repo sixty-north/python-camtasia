@@ -21,7 +21,7 @@ class Project:
         encoding: Encoding of the project file.
     """
 
-    def __init__(self, file_path, encoding=None):
+    def __init__(self, file_path: Path, encoding=None):
         self._file_path = file_path
         self._data = json.loads(self._project_file.read_text(encoding=encoding))
         self._encoding = encoding
@@ -56,7 +56,12 @@ class Project:
     @property
     def _project_file(self):
         "The project's main JSON data file, i.e. the 'tscproj' file."
-        return self.file_path / 'project.tscproj'
+        if self.file_path.is_dir():
+            for file in self.file_path.iterdir():
+                if file.is_file() and file.suffix == '.tscproj':
+                    return file
+        else:
+            return self.file_path
 
     def __repr__(self):
         return f'Project(file_path="{self.file_path}")'
