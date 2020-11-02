@@ -60,6 +60,7 @@ class Project:
             for file in self.file_path.iterdir():
                 if file.is_file() and file.suffix == '.tscproj':
                     return file
+            raise FileNotFoundError("No .tscproj file was found in directory")
         else:
             return self.file_path
 
